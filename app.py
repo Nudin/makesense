@@ -27,17 +27,13 @@ import mysql.connector
 import requests
 import yaml
 from flask import request
-from flask_sqlalchemy import SQLAlchemy
 from requests_oauthlib import OAuth1
 
-db_user = "michi"
-db_passwd = "mysqlpass"
-db_name = "machtsinn"
-db_table_main = "matches"
+from dbconf import *
 
 app = flask.Flask(__name__)
 db = mysql.connector.connect(
-    host="localhost", user=db_user, passwd=db_passwd, database=db_name
+    host=db_host, user=db_user, passwd=db_passwd, database=db_name
 )
 
 wdqurl = "https://query.wikidata.org/sparql?format=json&query="

@@ -5,11 +5,8 @@ from typing import List, Tuple
 import mysql.connector
 import requests
 
-db_user = "michi"
-db_passwd = "mysqlpass"
-db_name = "machtsinn"
-db_table_main = "matches"
-db_table_texts = "labels"
+from dbconf import *
+
 
 # Run a query against a web-api
 def runquery(url, params={}, session=requests):
@@ -34,7 +31,7 @@ with open("query.sparql") as f:
 
 try:
     mydb = mysql.connector.connect(
-        host="localhost",
+        host=db_host,
         user=db_user,
         passwd=db_passwd,
         database=db_name,
@@ -42,12 +39,12 @@ try:
         use_unicode=True,
     )
 except:
-    mydb = mysql.connector.connect(host="localhost", user=db_user, passwd=db_passwd)
+    mydb = mysql.connector.connect(host=db_host, user=db_user, passwd=db_passwd)
 
     mycursor = mydb.cursor()
     mycursor.execute("CREATE DATABASE {}".format(db_name))
     mydb = mysql.connector.connect(
-        host="localhost",
+        host=db_host,
         user=db_user,
         passwd=db_passwd,
         database=db_name,

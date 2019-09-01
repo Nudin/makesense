@@ -3,3 +3,4 @@ mwoauth
 pyyaml
 requests
 lexdata
+mysql-connector

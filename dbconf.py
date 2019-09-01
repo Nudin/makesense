@@ -1,0 +1,6 @@
+db_host = "localhost"
+db_user = "michi"
+db_passwd = "mysqlpass"
+db_name = "machtsinn"
+db_table_main = "matches"
+db_table_texts = "labels"
