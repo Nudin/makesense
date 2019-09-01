@@ -86,11 +86,11 @@ print("Collection results…")
 sql = "INSERT IGNORE INTO {} (lang, QID, LID, Status) VALUES (%s, %s, %s, %s)".format(
     db_table_main
 )
-values: List[Tuple[int, int, int, int]] = []
+values = []
 text_sql = "INSERT IGNORE INTO {} (lang, QID, lemma, gloss) VALUES (%s, %s, %s, %s)".format(
     db_table_texts
 )
-text_values: List[Tuple[int, int, str, str]] = []
+text_values = []
 for row in res:
     lang = int(row["lang"]["value"][32:])
     lid = int(row["lexeme"]["value"][32:])
