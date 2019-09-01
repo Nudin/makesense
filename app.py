@@ -76,8 +76,8 @@ def index():
 
 @app.route("/getcandidates")
 def getcandidates():
-    lang = request.args.get("lang", 188)
-    number = request.args.get("lang", 10)
+    lang = int(request.args.get("lang", 188))
+    number = int(request.args.get("number", 10))
     cursor = db.cursor()
     cursor.execute(
         """SELECT lemma, matches.QID, LID, matches.lang, gloss FROM matches

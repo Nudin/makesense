@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-import time
+#!/usr/bin/env python3
 from typing import List, Tuple
 
 import mysql.connector
@@ -99,7 +98,7 @@ for row in res:
     lemma = row["lemma"]["value"]
     desc = row["desc"]["value"]
 
-    values.append((lang, lid, qid, 0))
+    values.append((lang, qid, lid, 0))
     text_values.append((lang, lid, lemma, desc))
 
 print("Adding {} rows to Database…".format(len(values) + len(text_values)))
