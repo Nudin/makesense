@@ -1,0 +1,5 @@
+flask
+mwoauth
+pyyaml
+requests
+lexdata

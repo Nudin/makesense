@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block body %}
+
+        {% if username %}
+        <p>Hello {{ username }}!</p>
+        <form action="sendquery" method="post">
+            <input type="submit" value="Submit">
+        </form>
+        <p><a href="{{ url_for('logout') }}">logout</a></p>
+
+        {% else %}
+        <p>{{ greeting }}</p>
+        <p><a href="{{ url_for('login') }}">login</a></p>
+        {% endif %}
+
+{% endblock %}
