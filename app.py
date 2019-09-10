@@ -19,11 +19,12 @@
 
 import os
 import urllib
+import json
 
 import flask
+from flask_mysqldb import MySQL
 import LexData
 import mwoauth
-import mysql.connector
 import requests
 import yaml
 from flask import request
@@ -32,9 +33,13 @@ from requests_oauthlib import OAuth1
 from dbconf import *
 
 app = flask.Flask(__name__)
-db = mysql.connector.connect(
-    host=db_host, user=db_user, passwd=db_passwd, database=db_name
-)
+
+app.config['MYSQL_HOST'] = db_host
+app.config['MYSQL_USER'] = db_user
+app.config['MYSQL_PASSWORD'] = db_passwd
+app.config['MYSQL_DB'] = db_name
+db = MySQL(app)
+
 
 wdqurl = "https://query.wikidata.org/sparql?format=json&query="
 wdapiurl = "https://www.wikidata.org/w/api.php"
@@ -78,7 +83,7 @@ def index():
 def getcandidates():
     lang = int(request.args.get("lang", 188))
     number = int(request.args.get("number", 10))
-    cursor = db.cursor()
+    cursor = db.connection.cursor()
     cursor.execute(
         """SELECT lemma, matches.QID, LID, matches.lang, gloss FROM matches
         JOIN labels
@@ -89,8 +94,9 @@ def getcandidates():
         (lang, number),
     )
     results = cursor.fetchall()
+    cursor.close()
     username = flask.session.get("username", None)
-    return flask.render_template("index.html", username=username, greeting=str(results))
+    return json.dumps(results)
 
 
 @app.route("/save", methods=["POST"])
