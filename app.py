@@ -17,27 +17,30 @@
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
 import os
 import urllib
-import json
 
 import flask
-from flask_mysqldb import MySQL
 import LexData
 import mwoauth
 import requests
 import yaml
 from flask import request
+from flask.logging import create_logger
 from requests_oauthlib import OAuth1
 
-from dbconf import *
+from dbconf import db_host, db_name, db_passwd, db_user
+from flask_mysqldb import MySQL
 
 app = flask.Flask(__name__)
 
-app.config['MYSQL_HOST'] = db_host
-app.config['MYSQL_USER'] = db_user
-app.config['MYSQL_PASSWORD'] = db_passwd
-app.config['MYSQL_DB'] = db_name
+log = create_logger(app)
+
+app.config["MYSQL_HOST"] = db_host
+app.config["MYSQL_USER"] = db_user
+app.config["MYSQL_PASSWORD"] = db_passwd
+app.config["MYSQL_DB"] = db_name
 db = MySQL(app)
 
 
@@ -85,7 +88,9 @@ def getcandidates():
     number = int(request.args.get("number", 10))
     cursor = db.connection.cursor()
     cursor.execute(
-        """SELECT lemma, matches.QID, LID, matches.lang, gloss FROM matches
+        """
+        SELECT lemma, matches.QID, LID, matches.lang, gloss
+        FROM matches
         JOIN labels
             on matches.QID = labels.QID and matches.lang = labels.lang
         WHERE
@@ -95,15 +100,15 @@ def getcandidates():
     )
     results = cursor.fetchall()
     cursor.close()
-    username = flask.session.get("username", None)
     return json.dumps(results)
 
 
 @app.route("/save", methods=["POST"])
 def save():
-    lid = request.args.get("LID")
-    qid = request.args.get("QID")
-    gloss = request.args.get("gloss")
+    lid = "L" + request.form.get("LID")
+    qid = "Q" + request.form.get("QID")
+    lang = "Q" + request.form.get("language")
+    gloss = request.form.get("gloss")
     access_token = flask.session["access_token"]
     auth1 = OAuth1(
         consumer_token.key,
@@ -111,13 +116,15 @@ def save():
         resource_owner_key=access_token["key"],
         resource_owner_secret=access_token["secret"],
     )
-    repo = LexData.WikidataSession(token=auth1)
+    token = get_tokens("csrf", auth1)
+    repo = LexData.WikidataSession(token=token)
 
     L = LexData.Lexeme(repo, lid)
     if L.senses:
         pass  # FIXME
-    print('Lexeme {} "{}"'.format(lid, L.lemma))
 
+    if lang != "Q188":
+        return "Error. Language not supported yet!"
     glosses = {"de": gloss}
     claims = {"P5137": [qid]}
     try:
@@ -139,7 +146,7 @@ def login():
             app.config["OAUTH_MWURI"], consumer_token
         )
     except Exception:
-        app.logger.exception("mwoauth.initiate failed")
+        log.exception("mwoauth.initiate failed")
         return flask.redirect(flask.url_for("index"))
     else:
         flask.session["request_token"] = dict(zip(request_token._fields, request_token))
@@ -154,6 +161,7 @@ def oauth_callback():
         return flask.redirect(flask.url_for("index"))
 
     try:
+        log.warning(flask.request.query_string.decode("ascii"))
         access_token = mwoauth.complete(
             app.config["OAUTH_MWURI"],
             consumer_token,
@@ -165,7 +173,7 @@ def oauth_callback():
             app.config["OAUTH_MWURI"], consumer_token, access_token
         )
     except Exception:
-        app.logger.exception("OAuth authentication failed")
+        log.exception("OAuth authentication failed")
 
     else:
         flask.session["access_token"] = dict(zip(access_token._fields, access_token))

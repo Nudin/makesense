@@ -99,7 +99,7 @@ for row in res:
     desc = row["desc"]["value"]
 
     values.append((lang, qid, lid, 0))
-    text_values.append((lang, lid, lemma, desc))
+    text_values.append((lang, qid, lemma, desc))
 
 print("Adding {} rows to Database…".format(len(values) + len(text_values)))
 

@@ -1,14 +1,16 @@
 SELECT * WHERE {
- ?lexeme wikibase:lemma ?lemma;
+  ?lexeme wikibase:lemma ?lemma;
          dct:language ?lang;
          wikibase:lexicalCategory wd:Q1084.
+  FILTER NOT EXISTS { ?lexeme ontolex:sense ?sense }.
   
   ?item rdfs:label ?lemma.
-  FILTER NOT EXISTS { ?item a wikibase:Property}.
   ?item schema:description ?desc.	FILTER(LANG(?desc) = LANG(?lemma)).
+  FILTER NOT EXISTS { ?item a wikibase:Property}.
+  # Filter out common false-positives
   FILTER NOT EXISTS { ?item wdt:P131 ?_ }.
   FILTER NOT EXISTS { ?item wdt:P31 wd:Q4167410 }.
   FILTER NOT EXISTS { ?item wdt:P31 wd:Q11424 }.
   FILTER NOT EXISTS { ?item wdt:P31 wd:Q5 }.
-  }
-  ORDER By ?lemma
+}
+ORDER By ?lemma
