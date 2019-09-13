@@ -79,7 +79,7 @@ def get_tokens(tokentype, auth):
 @app.route("/")
 def index():
     username = flask.session.get("username", None)
-    return flask.render_template("index.html", username=username, greeting="test")
+    return flask.render_template("index.html", username=username)
 
 
 @app.route("/getcandidates")
@@ -95,7 +95,9 @@ def getcandidates():
             on matches.QID = labels.QID and matches.lang = labels.lang
         WHERE
             status = 0 and matches.lang = %s
-        LIMIT %s""",
+        ORDER BY RAND()
+        LIMIT %s
+        """,
         (lang, number),
     )
     results = cursor.fetchall()
@@ -109,6 +111,9 @@ def save():
     qid = "Q" + request.form.get("QID")
     lang = "Q" + request.form.get("language")
     gloss = request.form.get("gloss")
+    log.info("%s %s %s %s" % (lid, qid, lang, gloss))
+
+    # Get token and auth
     access_token = flask.session["access_token"]
     auth1 = OAuth1(
         consumer_token.key,
@@ -117,20 +122,35 @@ def save():
         resource_owner_secret=access_token["secret"],
     )
     token = get_tokens("csrf", auth1)
-    repo = LexData.WikidataSession(token=token)
+    username = flask.session.get("username", None)
+    repo = LexData.WikidataSession(username=username, token=token, auth=auth1)
 
+    # Edit – if possible
     L = LexData.Lexeme(repo, lid)
     if L.senses:
-        pass  # FIXME
-
+        # TODO: Fail only if the sense is the same
+        return "There's already a sense – aborting!", 409
     if lang != "Q188":
-        return "Error. Language not supported yet!"
+        return "Error. Language not supported yet!", 409
     glosses = {"de": gloss}
     claims = {"P5137": [qid]}
     try:
         _ = L.createSense(glosses, claims)
     except PermissionError:
-        return "Error!"  # FIXME
+        return "Your not permitted to do this action!", 403
+
+    # Update DB status
+    cursor = db.connection.cursor()
+    cursor.execute(
+        """
+        UPDATE
+        matches
+        SET status = 1
+        WHERE QID = %s and LID = %s
+        """,
+        (qid[1:], lid[1:]),
+    )
+    cursor.close()
     return "Done!"
 
 

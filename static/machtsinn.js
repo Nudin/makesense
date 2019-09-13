@@ -2,6 +2,7 @@ var main = (function () {
   var data = []
   var promise = null
   var row = null
+  var previous = null
 
   var load = function () {
     return new Promise(function (resolve, reject) {
@@ -18,19 +19,17 @@ var main = (function () {
     })
   }
 
-  var show = function () {
-    console.log('show')
-    row = data.pop()
-    var current = document.getElementById('current')
-    current.getElementsByClassName('lemma')[0].textContent = row[0]
-    current.getElementsByClassName('description')[0].textContent = row[4]
-    current.getElementsByClassName('QID')[0].innerHTML =
+  var show = function (state, row) {
+    var element = document.getElementById(state)
+    element.getElementsByClassName('lemma')[0].textContent = row[0]
+    element.getElementsByClassName('description')[0].textContent = row[4]
+    element.getElementsByClassName('QID')[0].innerHTML =
       '<a href="https://www.wikidata.org/wiki/Q' +
       row[1] +
       '">Q' +
       row[1] +
       '</a>'
-    current.getElementsByClassName('LID')[0].innerHTML =
+    element.getElementsByClassName('LID')[0].innerHTML =
       '<a href="https://www.wikidata.org/wiki/Lexeme:L' +
       row[2] +
       '">L' +
@@ -38,14 +37,25 @@ var main = (function () {
       '</a>'
   }
 
+  var showLast = function () {
+    var element = document.getElementById('previous')
+    element.getElementsByClassName('message')[0].textContent = 'Saved:'
+    show('previous', previous)
+  }
+
+  var showCurrent = function () {
+    row = data.pop()
+    show('current', row)
+  }
+
   var next = function () {
     if (data.length === 0) {
       promise.then(function (newdata) {
         data = data.concat(newdata)
-        show()
+        showCurrent()
       })
     } else {
-      show()
+      showCurrent()
     }
     if (data.length < 4) {
       promise = load()
@@ -54,15 +64,17 @@ var main = (function () {
 
   var send = function () {
     var data = new FormData()
-    data.append('QID', row[1])
-    data.append('LID', row[2])
-    data.append('language', row[3])
-    data.append('gloss', row[4])
+    var current = row
+    data.append('QID', current[1])
+    data.append('LID', current[2])
+    data.append('language', current[3])
+    data.append('gloss', current[4])
     return new Promise(function (resolve, reject) {
       var xhttp = new XMLHttpRequest()
       xhttp.open('POST', './save', true)
       xhttp.onload = function () {
         if (xhttp.status === 200) {
+          previous = current
           resolve()
         } else {
           reject(Error(xhttp.response))
@@ -72,21 +84,28 @@ var main = (function () {
     })
   }
 
+  var sendAndNext = function () {
+    send().then(function () {
+      showLast()
+    })
+    next()
+  }
+
   return {
     init: function () {
       load().then(function (newdata) {
         data = data.concat(newdata)
-        show()
+        showCurrent()
       })
       var nextbtn = document.getElementById('nextbtn')
       nextbtn.onclick = next
       var sndbtn = document.getElementById('savebtn')
-      sndbtn.onclick = send
+      sndbtn.onclick = sendAndNext
     },
     get: function () {
       return data
     },
-    show: show,
+    show: showCurrent,
     buttonpressed: next
   }
 })()
