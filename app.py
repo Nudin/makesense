@@ -122,6 +122,7 @@ def reject():
         (qid[1:], lid[1:]),
     )
     cursor.close()
+    db.connection.commit()
     return "Done!"
 
 
@@ -171,6 +172,7 @@ def save():
         (qid[1:], lid[1:]),
     )
     cursor.close()
+    db.connection.commit()
     return "Done!"
 
 
