@@ -1,30 +1,33 @@
 {% extends "layout.html" %}
 {% block head %}
 	<script src="/machtsinn/static/machtsinn.js"></script>
+        <link href="/machtsinn/static/main.css" rel="stylesheet">
 {% endblock %}
 {% block body %}
 
         {% if username %}
-        <p>Hello {{ username }}!</p>
-        <p><a href="{{ url_for('logout') }}">logout</a></p>
+        <p id="greeting">Hello {{ username }}!</p>
+        <div id="login"><a href="{{ url_for('logout') }}">logout</a></div>
 
         {% else %}
-        <p>You have to log in with Wikidata to edit</p>
-        <p><a href="{{ url_for('login') }}">login</a></p>
+        <p id="greeting">You have to log in with Wikidata to edit</p>
+        <div id="login"><a href="{{ url_for('login') }}">login</a></div>
         {% endif %}
 
         <div id="next"></div>
 
         <div id="current">
-                <p>Is this a meaning for the given Word?</p>
+                <p>Is this a common meaning (sense) for the given Word?</p>
                 <div class="lemma"></div>
                 <div class="description"></div>
                 <div class="QID"></div>
                 <div class="LID"></div>
         {% if username %}
+        <div id="buttons">
+                <button id="rejectbtn">Reject match</button>
                 <button id="nextbtn">Next</button>
                 <button id="savebtn">Save</button>
-                <button id="rejectbtn">Reject match</button>
+        </div>
         {% endif %}
         </div>
 

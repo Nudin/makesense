@@ -1,0 +1,52 @@
+body {
+	margin: 1em 5em;
+}
+
+div {
+	margin: 0.3em;
+}
+
+#current {
+  margin: 2em auto;
+  display: block;
+  width: 25em;
+}
+
+#previous {
+  margin: 5em auto;
+  display: block;
+  width: 30em;
+}
+
+#login {
+	float: right;
+	display: inline-block;
+}
+
+#greeting {
+	display: inline-block;
+}
+
+.lemma {
+	font-size: larger;
+	font-weight: bold;
+}
+
+.QID {
+	display: inline-block;
+	margin: 0 1em;
+}
+
+.LID {
+	display: inline-block;
+	margin: 0 1em;
+}
+
+button {
+	margin: 0.3em;
+}
+
+.message {
+	margin-bottom: 1em;
+	color: grey;
+}
