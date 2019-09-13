@@ -91,6 +91,26 @@ var main = (function () {
     next()
   }
 
+  var rejectAndNext = function () {
+    next()
+    return new Promise(function (resolve, reject) {
+      var data = new FormData()
+      var current = row
+      data.append('QID', current[1])
+      data.append('LID', current[2])
+      var xhttp = new XMLHttpRequest()
+      xhttp.open('POST', './reject', true)
+      xhttp.onload = function () {
+        if (xhttp.status === 200) {
+          resolve()
+        } else {
+          reject(Error(xhttp.response))
+        }
+      }
+      xhttp.send(data)
+    })
+  }
+
   return {
     init: function () {
       load().then(function (newdata) {
@@ -101,6 +121,8 @@ var main = (function () {
       nextbtn.onclick = next
       var sndbtn = document.getElementById('savebtn')
       sndbtn.onclick = sendAndNext
+      var rejectbtn = document.getElementById('rejectbtn')
+      rejectbtn.onclick = rejectAndNext
     },
     get: function () {
       return data

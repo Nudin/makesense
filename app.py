@@ -105,6 +105,26 @@ def getcandidates():
     return json.dumps(results)
 
 
+@app.route("/reject", methods=["POST"])
+def reject():
+    lid = "L" + request.form.get("LID")
+    qid = "Q" + request.form.get("QID")
+
+    # Update DB status
+    cursor = db.connection.cursor()
+    cursor.execute(
+        """
+        UPDATE
+        matches
+        SET status = -1
+        WHERE QID = %s and LID = %s
+        """,
+        (qid[1:], lid[1:]),
+    )
+    cursor.close()
+    return "Done!"
+
+
 @app.route("/save", methods=["POST"])
 def save():
     lid = "L" + request.form.get("LID")
