@@ -1,0 +1,3 @@
+SELECT * WHERE {
+  ?lang wdt:P424 ?code.
+}

@@ -4,7 +4,15 @@ from typing import List, Tuple
 import mysql.connector
 import requests
 
-from dbconf import *
+from dbconf import (
+    db_host,
+    db_name,
+    db_passwd,
+    db_table_lang_codes,
+    db_table_main,
+    db_table_texts,
+    db_user,
+)
 
 
 # Run a query against a web-api
@@ -109,4 +117,26 @@ try:
 except:
     print(mycursor.statement)
 
+mydb.commit()
+
+
+# Query for the wikimedia language codes
+with open("querylangcodes.sparql") as f:
+    sparql = f.read()
+
+res = runSPARQLquery(sparql)
+langlist = [(row["lang"]["value"][32:], row["code"]["value"]) for row in res]
+
+
+mycursor.execute(
+    """CREATE TABLE IF NOT EXISTS `{}` (
+     `lang` INT,
+     `code` TEXT,
+     PRIMARY KEY (`lang`)
+);""".format(
+        db_table_lang_codes
+    )
+)
+sql = "INSERT IGNORE INTO {} (lang, code) VALUES (%s, %s)".format(db_table_lang_codes)
+mycursor.executemany(sql, langlist)
 mydb.commit()

@@ -43,6 +43,19 @@ app.config["MYSQL_PASSWORD"] = db_passwd
 app.config["MYSQL_DB"] = db_name
 db = MySQL(app)
 
+languages = {"Q188": "de"}
+
+with app.app_context():
+    cursor = db.connection.cursor()
+    cursor.execute(
+        """
+        SELECT lang, code
+        FROM languages
+        """
+    )
+    results = cursor.fetchall()
+    languages = {"Q" + str(k): v for k, v in results}
+    cursor.close()
 
 wdqurl = "https://query.wikidata.org/sparql?format=json&query="
 wdapiurl = "https://www.wikidata.org/w/api.php"
@@ -130,9 +143,9 @@ def reject():
 def save():
     lid = "L" + request.form.get("LID")
     qid = "Q" + request.form.get("QID")
-    lang = "Q" + request.form.get("language")
+    lang = "Q" + request.form.get("lang")
     gloss = request.form.get("gloss")
-    log.info("%s %s %s %s" % (lid, qid, lang, gloss))
+    log.info("%s %s %s %s", lid, qid, lang, gloss)
 
     # Get token and auth
     access_token = flask.session["access_token"]
@@ -151,13 +164,14 @@ def save():
     if L.senses:
         # TODO: Fail only if the sense is the same
         return "There's already a sense – aborting!", 409
-    if lang != "Q188":
+    if lang not in languages:
         return "Error. Language not supported yet!", 409
-    glosses = {"de": gloss}
+    glosses = {languages[lang]: gloss}
     claims = {"P5137": [qid]}
     try:
         _ = L.createSense(glosses, claims)
-    except PermissionError:
+    except PermissionError as error:
+        log.exception(error)
         return "Your not permitted to do this action!", 403
 
     # Update DB status

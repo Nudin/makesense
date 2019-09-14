@@ -3,11 +3,12 @@ var main = (function () {
   var promise = null
   var row = null
   var previous = null
+  var lang = 188
 
   var load = function () {
     return new Promise(function (resolve, reject) {
       var xhttp = new XMLHttpRequest()
-      xhttp.open('GET', './getcandidates', true)
+      xhttp.open('GET', './getcandidates?lang=' + lang, true)
       xhttp.onload = function () {
         if (xhttp.status === 200) {
           resolve(JSON.parse(xhttp.response))
@@ -67,7 +68,7 @@ var main = (function () {
     var current = row
     data.append('QID', current[1])
     data.append('LID', current[2])
-    data.append('language', current[3])
+    data.append('lang', current[3])
     data.append('gloss', current[4])
     return new Promise(function (resolve, reject) {
       var xhttp = new XMLHttpRequest()
@@ -113,6 +114,8 @@ var main = (function () {
 
   return {
     init: function () {
+      var parameters = new URLSearchParams(window.location.search)
+      lang = parameters.get('lang') || 188
       load().then(function (newdata) {
         data = data.concat(newdata)
         showCurrent()
