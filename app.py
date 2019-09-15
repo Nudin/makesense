@@ -161,9 +161,10 @@ def save():
 
     # Edit – if possible
     L = LexData.Lexeme(repo, lid)
-    if L.senses:
-        # TODO: Fail only if the sense is the same
-        return "There's already a sense – aborting!", 409
+    for sense in L.senses:
+        claims = sense.claims().get("P5137")
+        if claims and claims[0].purevalue == qid:
+            return "Sense already existing", 409
     if lang not in languages:
         return "Error. Language not supported yet!", 409
     glosses = {languages[lang]: gloss}
