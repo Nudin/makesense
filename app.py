@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 #
-# This file is part of the Toolforge flask WSGI tutorial
+# This file is part of MachtSinn
+# This file is based on the Toolforge flask WSGI tutorial
 #
-# Copyright (C) 2017 Bryan Davis and contributors
+# Copyright (C) 2019 Michael Schönitzer, Bryan Davis and contributors
 #
 # This program is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by the Free
