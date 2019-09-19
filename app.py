@@ -91,13 +91,27 @@ def get_tokens(tokentype, auth):
 
 @app.route("/")
 def index():
+    lang = int(request.args.get("lang", 1860))
+    cursor = db.connection.cursor()
+    cursor.execute(
+        """SELECT languages.code, languages.lang
+        from matches join languages
+        on matches.lang = languages.lang
+        where status = %s
+        GROUP BY languages.lang;""",
+        (0,),
+    )
+    languages = cursor.fetchall()
+    cursor.close()
     username = flask.session.get("username", None)
-    return flask.render_template("index.html", username=username)
+    return flask.render_template(
+        "index.html", username=username, languages=languages, currentlang=lang
+    )
 
 
 @app.route("/getcandidates")
 def getcandidates():
-    lang = int(request.args.get("lang", 188))
+    lang = int(request.args.get("lang", 1860))
     number = int(request.args.get("number", 10))
     cursor = db.connection.cursor()
     cursor.execute(
@@ -189,6 +203,31 @@ def save():
     cursor.close()
     db.connection.commit()
     return "Done!"
+
+
+@app.route("/statistics", methods=["GET"])
+def statistics():
+    cursor = db.connection.cursor()
+    cursor.execute(
+        """SELECT languages.code, count(*)
+        from matches join languages
+        on matches.lang = languages.lang
+        where status = %s
+        GROUP BY languages.lang;""",
+        (1,),
+    )
+    added = cursor.fetchall()
+    cursor.execute(
+        """SELECT languages.code, count(*)
+        from matches join languages
+        on matches.lang = languages.lang
+        where status = %s
+        GROUP BY languages.lang;""",
+        (0,),
+    )
+    todo = cursor.fetchall()
+    cursor.close()
+    return flask.render_template("statistics.html", added=added, todo=todo)
 
 
 @app.route("/login")

@@ -3,7 +3,7 @@ var main = (function () {
   var promise = null
   var row = null
   var previous = null
-  var lang = 188
+  var lang = 1860
 
   var load = function () {
     return new Promise(function (resolve, reject) {
@@ -112,21 +112,30 @@ var main = (function () {
     })
   }
 
+  var init = function () {
+    var parameters = new URLSearchParams(window.location.search)
+    lang = parameters.get('lang') || 1860
+    load().then(function (newdata) {
+      data = data.concat(newdata)
+      showCurrent()
+    })
+    var nextbtn = document.getElementById('nextbtn')
+    nextbtn.onclick = next
+    var sndbtn = document.getElementById('savebtn')
+    sndbtn.onclick = sendAndNext
+    var rejectbtn = document.getElementById('rejectbtn')
+    rejectbtn.onclick = rejectAndNext
+
+    var langsel = document.getElementById('languageselector')
+    langsel.onchange = function () {
+      lang = langsel.value
+      history.pushState(lang, '', window.location.pathname + '?lang=' + lang)
+      init()
+    }
+  }
+
   return {
-    init: function () {
-      var parameters = new URLSearchParams(window.location.search)
-      lang = parameters.get('lang') || 188
-      load().then(function (newdata) {
-        data = data.concat(newdata)
-        showCurrent()
-      })
-      var nextbtn = document.getElementById('nextbtn')
-      nextbtn.onclick = next
-      var sndbtn = document.getElementById('savebtn')
-      sndbtn.onclick = sendAndNext
-      var rejectbtn = document.getElementById('rejectbtn')
-      rejectbtn.onclick = rejectAndNext
-    },
+    init: init,
     get: function () {
       return data
     },

@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block head %}
+	<script src="/machtsinn/static/machtsinn.js"></script>
+        <link href="/machtsinn/static/main.css" rel="stylesheet">
+{% endblock %}
+{% block body %}
+
+<h1>Senses added with MachtSinn</h1>
+<table>
+        <tr>
+                <tr>Language</tr>
+                <tr>#</tr>
+        </tr>
+
+        {% for row in added %}
+        <tr>
+                <td>{{row[0]}}</td>
+                <td>{{row[1]}}</td>
+        </tr>
+        {% endfor %}
+</table>
+
+<h1>Senses still to inspect</h1>
+<table>
+        <tr>
+                <tr>Language</tr>
+                <tr>#</tr>
+        </tr>
+
+        {% for row in todo %}
+        <tr>
+                <td>{{row[0]}}</td>
+                <td>{{row[1]}}</td>
+        </tr>
+        {% endfor %}
+</table>
+
+{% endblock %}

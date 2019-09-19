@@ -13,6 +13,14 @@
         <p id="greeting">You have to log in with Wikidata to edit</p>
         <div id="login"><a href="{{ url_for('login') }}">login</a></div>
         {% endif %}
+        <div id="languagesetting">
+        <label>Language</label>
+        <select id="languageselector">
+                {% for lang in languages %}
+                <option value="{{lang[1]}}" {{'selected' if currentlang == lang[1]}}>{{lang[0]}}</option>
+                {% endfor %}
+        </select>
+        </div>
 
         <div id="next"></div>
 
