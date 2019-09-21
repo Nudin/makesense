@@ -29,7 +29,8 @@ var main = (function () {
       xhttp.open('GET', './getcandidates?lang=' + lang, true)
       xhttp.onload = function () {
         if (xhttp.status === 200) {
-          resolve(JSON.parse(xhttp.response))
+          data = data.concat(JSON.parse(xhttp.response))
+          resolve()
         } else {
           reject(Error(xhttp.response))
         }
@@ -69,10 +70,7 @@ var main = (function () {
 
   var next = function () {
     if (data.length === 0) {
-      promise.then(function (newdata) {
-        data = data.concat(newdata)
-        showCurrent()
-      })
+      promise.then(showCurrent)
     } else {
       showCurrent()
     }
@@ -104,9 +102,7 @@ var main = (function () {
   }
 
   var sendAndNext = function () {
-    send().then(function () {
-      showLast()
-    })
+    send().then(showLast)
     next()
   }
 
@@ -134,8 +130,7 @@ var main = (function () {
     data = []
     var parameters = new URLSearchParams(window.location.search)
     lang = parameters.get('lang') || 1860
-    load().then(function (newdata) {
-      data = data.concat(newdata)
+    load().then(function () {
       showCurrent()
     })
     var nextbtn = document.getElementById('nextbtn')
