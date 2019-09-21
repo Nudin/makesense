@@ -131,6 +131,7 @@ var main = (function () {
   }
 
   var init = function () {
+    data = []
     var parameters = new URLSearchParams(window.location.search)
     lang = parameters.get('lang') || 1860
     load().then(function (newdata) {
