@@ -9,8 +9,8 @@
 <h1>Senses added with MachtSinn</h1>
 <table>
         <tr>
-                <tr>Language</tr>
-                <tr>#</tr>
+                <th>Language</th>
+                <th>#</th>
         </tr>
 
         {% for row in added %}
@@ -24,11 +24,26 @@
 <h1>Senses still to inspect</h1>
 <table>
         <tr>
-                <tr>Language</tr>
-                <tr>#</tr>
+                <th>Language</th>
+                <th>#</th>
         </tr>
 
         {% for row in todo %}
+        <tr>
+                <td>{{row[0]}}</td>
+                <td>{{row[1]}}</td>
+        </tr>
+        {% endfor %}
+</table>
+
+<h1>Wrong matches rejected</h1>
+<table>
+        <tr>
+                <th>Language</th>
+                <th>#</th>
+        </tr>
+
+        {% for row in rejected %}
         <tr>
                 <td>{{row[0]}}</td>
                 <td>{{row[1]}}</td>

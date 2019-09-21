@@ -99,7 +99,8 @@ def index():
         from matches join languages
         on matches.lang = languages.lang
         where status = %s
-        GROUP BY languages.lang;""",
+        GROUP BY languages.lang
+        ORDER BY languages.code;""",
         (0,),
     )
     languages = cursor.fetchall()
@@ -214,7 +215,8 @@ def statistics():
         from matches join languages
         on matches.lang = languages.lang
         where status = %s
-        GROUP BY languages.lang;""",
+        GROUP BY languages.lang
+        ORDER BY COUNT(*) DESC;""",
         (1,),
     )
     added = cursor.fetchall()
@@ -223,12 +225,25 @@ def statistics():
         from matches join languages
         on matches.lang = languages.lang
         where status = %s
-        GROUP BY languages.lang;""",
+        GROUP BY languages.lang
+        ORDER BY COUNT(*) DESC;""",
+        (-1,),
+    )
+    rejected = cursor.fetchall()
+    cursor.execute(
+        """SELECT languages.code, count(*)
+        from matches join languages
+        on matches.lang = languages.lang
+        where status = %s
+        GROUP BY languages.lang
+        ORDER BY COUNT(*) DESC;""",
         (0,),
     )
     todo = cursor.fetchall()
     cursor.close()
-    return flask.render_template("statistics.html", added=added, todo=todo)
+    return flask.render_template(
+        "statistics.html", added=added, todo=todo, rejected=rejected
+    )
 
 
 @app.route("/login")
