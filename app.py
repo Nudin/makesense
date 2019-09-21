@@ -178,7 +178,7 @@ def save():
     L = LexData.Lexeme(repo, lid)
     for sense in L.senses:
         claims = sense.claims().get("P5137")
-        if claims and claims[0].purevalue == qid:
+        if claims and claims[0].pure_value == qid:
             return "Sense already existing", 409
     if lang not in languages:
         return "Error. Language not supported yet!", 409
