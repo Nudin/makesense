@@ -9,8 +9,6 @@ SELECT * WHERE {
   FILTER NOT EXISTS { ?item a wikibase:Property}.
   # Filter out common false-positives
   FILTER NOT EXISTS { ?item wdt:P131 ?_ }.
-  FILTER NOT EXISTS { ?item wdt:P31 wd:Q4167410 }.
-  FILTER NOT EXISTS { ?item wdt:P31 wd:Q11424 }.
-  FILTER NOT EXISTS { ?item wdt:P31 wd:Q5 }.
+  FILTER NOT EXISTS { ?item wdt:P31 wd:Q4167410, wd:Q101352, wd:Q11424, wd:Q3305213, wd:Q482994 }
 }
 ORDER By ?lemma
