@@ -161,3 +161,19 @@ var main = (function () {
 document.addEventListener('DOMContentLoaded', function () {
   main.init()
 })
+document.addEventListener("keypress", keyPressHandler, false);
+
+/* Button press handlers */
+function keyPressHandler(e){
+    if (e.keyCode == 78) {
+//        console.log("next");
+        next();
+    }else if(e.keyCode == 83) {
+//        console.log("save");
+        sendAndNext();
+    }else if(e.keyCode == 82) {
+//        console.log("reject");
+        rejectAndNext();
+    }
+}
+                                                                                            
