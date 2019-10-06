@@ -1,40 +1,64 @@
 body {
 	margin: 1em 5em;
+	font-family: 'Open Sans', Arial, sans-serif;
 }
 
 div {
-	margin: 0.3em;
+	
 }
 
 #current {
   margin: 2em auto;
   display: block;
-  width: 25em;
+  width: 30em;
+  text-align: center;
 }
 
 #previous {
-  margin: 5em auto;
+  margin: 2em auto;
   display: block;
   width: 30em;
+  text-align: center;
 }
 
 #login {
-	float: right;
-	display: inline-block;
+	margin-right: 3em;
+	margin-top: 1em;
+	float: right;	
+	font-weight: bold;
+	padding: 0.5em 1.5em;		
+}
+
+#login a {
+	text-decoration: none;
+}
+
+#login:hover {
+	background-color: rgba(0, 128, 255, 0.5);
+	transition: background-color 0.3s ease-in;
 }
 
 #greeting {
 	display: inline-block;
 }
 
+#languageselector {
+	margin-left: 0.5em;
+}
+
 .lemma {
-	font-size: larger;
+	font-size: 1.5em;
 	font-weight: bold;
+	padding: 1em;
+}
+
+.description {
+	padding: 1em;
 }
 
 .QID {
 	display: inline-block;
-	margin: 0 1em;
+	margin: 0 0 0.5em 1em;
 }
 
 .LID {
@@ -49,4 +73,9 @@ button {
 .message {
 	margin-bottom: 1em;
 	color: grey;
+}
+
+#rejectbtn, #nextbtn, #savebtn {
+	padding: 0.4em;
+	width: 8em;
 }
