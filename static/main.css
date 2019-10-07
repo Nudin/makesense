@@ -58,7 +58,7 @@ div {
 
 .QID {
 	display: inline-block;
-	margin: 0 0 0.5em 1em;
+	margin: 0 0 0.75em 1em;
 }
 
 .LID {
@@ -67,7 +67,7 @@ div {
 }
 
 button {
-	margin: 0.3em;
+	margin: 0.5em;
 }
 
 .message {
@@ -76,6 +76,13 @@ button {
 }
 
 #rejectbtn, #nextbtn, #savebtn {
-	padding: 0.4em;
-	width: 8em;
+	padding: 0.6em;
+	width: 10em;
+}
+
+.stickyfooter {
+	position: absolute;
+	bottom: 1em;
+	left: 50%;
+	transform: translateX(-50%);
 }
