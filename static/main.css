@@ -1,40 +1,64 @@
 body {
 	margin: 1em 5em;
+	font-family: 'Open Sans', Arial, sans-serif;
 }
 
 div {
-	margin: 0.3em;
+	
 }
 
 #current {
   margin: 2em auto;
   display: block;
-  width: 25em;
+  width: 30em;
+  text-align: center;
 }
 
 #previous {
-  margin: 5em auto;
+  margin: 2em auto;
   display: block;
   width: 30em;
+  text-align: center;
 }
 
 #login {
-	float: right;
-	display: inline-block;
+	margin-right: 3em;
+	margin-top: 1em;
+	float: right;	
+	font-weight: bold;
+	padding: 0.5em 1.5em;		
+}
+
+#login a {
+	text-decoration: none;
+}
+
+#login:hover {
+	background-color: rgba(0, 128, 255, 0.5);
+	transition: background-color 0.3s ease-in;
 }
 
 #greeting {
 	display: inline-block;
 }
 
+#languageselector {
+	margin-left: 0.5em;
+}
+
 .lemma {
-	font-size: larger;
+	font-size: 1.5em;
 	font-weight: bold;
+	padding: 1em;
+}
+
+.description {
+	padding: 1em;
 }
 
 .QID {
 	display: inline-block;
-	margin: 0 1em;
+	margin: 0 0 0.75em 1em;
 }
 
 .LID {
@@ -43,7 +67,7 @@ div {
 }
 
 button {
-	margin: 0.3em;
+	margin: 0.5em;
 }
 
 .message {
@@ -51,10 +75,11 @@ button {
 	color: grey;
 }
 
-.footer {
-	margin: 5em auto 0 auto;
-	width: max-content;
+#rejectbtn, #nextbtn, #savebtn {
+	padding: 0.6em;
+	width: 10em;
 }
+
 .header {
 	margin: 0 auto 3em auto;
 	width: max-content;
@@ -62,7 +87,6 @@ button {
 .stickyfooter {
 	position: absolute;
 	bottom: 1em;
-	width: 100%;
-	left: 0;
-	margin: 0;
+	left: 50%;
+	transform: translateX(-50%);
 }
