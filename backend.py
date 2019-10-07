@@ -28,6 +28,7 @@ from dbconf import (
     db_table_lang_codes,
     db_table_main,
     db_table_texts,
+    db_table_lexemes,
     db_user,
 )
 
@@ -48,7 +49,7 @@ def runSPARQLquery(query):
 
 endpoint_url = "https://query.wikidata.org/sparql"
 
-user_agent = "makesense 0.0.1 by User:MichaelSchoenitzer"
+user_agent = "makesense 0.0.2 by User:MichaelSchoenitzer"
 
 with open("query.sparql") as f:
     sparql = f.read()
@@ -93,6 +94,17 @@ mycursor.execute(
 
 mycursor.execute(
     """CREATE TABLE IF NOT EXISTS `{}` (
+     `LID` INT,
+     `category` INT,
+     `genus` INT,
+     PRIMARY KEY (`LID`)
+);""".format(
+        db_table_lexemes
+    )
+)
+
+mycursor.execute(
+    """CREATE TABLE IF NOT EXISTS `{}` (
      `lang` INT,
      `QID` INT,
      `lemma` TEXT CHARACTER SET utf8 NOT NULL,
@@ -115,6 +127,10 @@ text_sql = "INSERT IGNORE INTO {} (lang, QID, lemma, gloss) VALUES (%s, %s, %s, 
     db_table_texts
 )
 text_values = []
+lexeme_sql = "INSERT IGNORE INTO {} (lemma, category, genus) VALUES (%s, %s, %s)".format(
+    db_table_lexemes
+)
+lexeme_values = []
 for row in res:
     lang = int(row["lang"]["value"][32:])
     lid = int(row["lexeme"]["value"][32:])
@@ -123,14 +139,23 @@ for row in res:
     lemma = row["lemma"]["value"]
     desc = row["desc"]["value"]
 
+    cat = row["cat"]["value"]
+    genus = row["genus"]["value"]
+
     values.append((lang, qid, lid, 0))
     text_values.append((lang, qid, lemma, desc))
+    lexeme_values.append((lid, cat, genus))
 
-print("Adding {} rows to Database…".format(len(values) + len(text_values)))
+print(
+    "Adding {} rows to Database…".format(
+        len(values) + len(text_values) + len(lexeme_values)
+    )
+)
 
 try:
     mycursor.executemany(sql, values)
     mycursor.executemany(text_sql, text_values)
+    mycursor.executemany(lexeme_sql, lexeme_values)
 except:
     print(mycursor.statement)
 

@@ -22,6 +22,8 @@ var main = (function () {
   var row = null
   var previous = null
   var lang = 1860
+  var langcode = "en"
+  var cache = {}
 
   var load = function () {
     return new Promise(function (resolve, reject) {
@@ -37,6 +39,30 @@ var main = (function () {
       }
       xhttp.send()
     })
+  }
+
+  function getLabel(qid, langcode) {
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+         if (this.readyState == 4 && this.status == 200) {
+             data = JSON.parse(this.responseText);
+             console.log(data.entities[qid].labels[langcode].value);
+         }
+    };
+    xhttp.open("GET", "https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&ids=" +qid+ "&props=labels&languages=" + langcode, true);
+    xhttp.setRequestHeader("Content-type", "application/json");
+    xhttp.send();
+  }
+
+  function getLabelCached(qid) {
+    if ( qid in cache ) {
+      return cache[qid];
+    }
+    else {
+      value = getLabel(qid, langcode)
+      cache[qid] = value
+      return value
+    }
   }
 
   var show = function (state, row) {
@@ -128,6 +154,7 @@ var main = (function () {
 
   var init = function () {
     data = []
+    cache = []
     var parameters = new URLSearchParams(window.location.search)
     lang = parameters.get('lang') || 1860
     load().then(function () {
@@ -141,8 +168,10 @@ var main = (function () {
     rejectbtn.onclick = rejectAndNext
 
     var langsel = document.getElementById('languageselector')
+    langcode = langsel.text
     langsel.onchange = function () {
       lang = langsel.value
+      langcode = langsel.text
       history.pushState(lang, '', window.location.pathname + '?lang=' + lang)
       init()
     }
