@@ -5,54 +5,74 @@
         <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&display=swap" rel="stylesheet">
 {% endblock %}
 {% block body %}
+        <div class="container">
 
-        {% if username %}
-        <p id="greeting">Hello {{ username }}!</p>
-        <div id="login"><a href="{{ url_for('logout') }}">Logout</a></div>
+                <div id="header">
+                        <p id="info-symbol">&#9432</p>
+                        <div id="login"><a href="/machtsinn/logout">Logout</a></div>
+                        {% if username %}
+                        <p id="greeting">Hello {{ username }}!</p>
+                        <div id="login"><a href="{{ url_for('logout') }}">Logout</a></div>
 
-        {% else %}
-        <p id="greeting">You have to log in with Wikidata to edit</p>
-        <div id="login"><a href="{{ url_for('login') }}">Login</a></div>
-        {% endif %}
-        <div id="languagesetting">
-        <label>Language</label>
-        <select id="languageselector">
-                {% for lang in languages %}
-                <option value="{{lang[1]}}" {{'selected' if currentlang == lang[1]}}>{{lang[0]}}</option>
-                {% endfor %}
-        </select>
-        </div>
+                        {% else %}
+                        <p id="greeting">You have to log in with Wikidata to edit</p>
+                        <div id="login"><a href="{{ url_for('login') }}">Login</a></div>
+                </div>
 
-        <div id="next"></div>
+                <p id="heading">MachtSinn</p>
+                <p id="subheading">A game for bladiblub.</p>
 
-        <div id="current">
-                <p>Is this a common meaning (sense) for the given Word?</p>
-                <div class="lemma"></div>
-                <div class="description"></div>
-                <div class="QID"></div>
-                <div class="LID"></div>
-        {% if username %}
-        <div id="buttons">
-                <button id="rejectbtn">Reject match</button>
-                <button id="nextbtn">Skip match</button>
-                <button id="savebtn">Save match</button>
-        </div>
-        {% endif %}
-        </div>
+                
+                
 
-        <div id="previous">
-                <div class="message"></div>
-                <div class="lemma"></div>
-                <div class="description"></div>
-                <div class="QID"></div>
-                <div class="LID"></div>
-        </div>
+                <div id="next"></div>
 
-        <div class="stickyfooter">
-                <div class="footer">
-                        <a href="https://github.com/Nudin/makesense">Code on Github</a>
-                        <b>·</b>
-                        <a href="./statistics">Statistics</a>
+                <div id="current">
+                        <p>Is</p>
+                        <div class="lemma">order</div>                                        
+                        <p>a common meaning (sense) for the given Word?</p>
+                        <div class="description">concept in ring theory</div>
+                        <!--
+                        <div class="QID"><a href="https://www.wikidata.org/wiki/Q1431456">Q1431456</a></div>
+                        <div class="LID"><a href="https://www.wikidata.org/wiki/Lexeme:L4332">L4332</a></div>
+                        -->
+                {% if username %}
+                <div id="buttons">
+                        <button id="rejectbtn">No match</button>
+                        <button id="savebtn">It's a match</button>
+                        <button id="nextbtn">Skip</button>                    
+                </div>
+                {% endif %}
+                </div>
+
+                <div id="previous">                    
+                        <div class="message">Last Saved</div>
+                        <div id="previous-lemma-description">                  
+                                <div class="lemma">tuba</div>
+                                <p>is a common meaning for</p>
+                                <div class="description">variety of cloud</div>
+                        </div>                        
+                    <!--
+                    <div class="QID"><a href="https://www.wikidata.org/wiki/Q268390">Q268390</a></div>
+                    <div class="LID"><a href="https://www.wikidata.org/wiki/Lexeme:L18864">L18864</a></div>
+                    -->
+                </div>
+
+                <div class="stickyfooter">
+                        <div class="footer">
+                                <a href="https://github.com/Nudin/makesense">Code on Github</a>
+                                <b>·</b>
+                                <a href="./statistics">Statistics</a>
+                                {% endif %}
+                                <div id="languagesetting">
+                                <label>Language</label>
+                                <select id="languageselector">
+                                        {% for lang in languages %}
+                                        <option value="{{lang[1]}}" {{'selected' if currentlang == lang[1]}}>{{lang[0]}}</option>
+                                        {% endfor %}
+                                </select>
+                                </div>
+                        </div>
                 </div>
         </div>
 {% endblock %}
