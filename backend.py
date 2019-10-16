@@ -26,9 +26,9 @@ from dbconf import (
     db_name,
     db_passwd,
     db_table_lang_codes,
+    db_table_lexemes,
     db_table_main,
     db_table_texts,
-    db_table_lexemes,
     db_user,
 )
 
@@ -50,6 +50,10 @@ def runSPARQLquery(query):
 endpoint_url = "https://query.wikidata.org/sparql"
 
 user_agent = "makesense 0.0.2 by User:MichaelSchoenitzer"
+
+# This variable should be incremented every time the query is changed
+# and the database should be pruned from data that is not in the query anymore
+dataversion = 2
 
 with open("query.sparql") as f:
     sparql = f.read()
@@ -86,6 +90,7 @@ mycursor.execute(
      `QID` INT,
      `LID` INT,
      `Status` INT,
+     `version` INT,
      PRIMARY KEY (`lang`,`QID`,`LID`)
 );""".format(
         db_table_main
@@ -98,6 +103,7 @@ mycursor.execute(
      `category` INT,
      `genus` INT,
      PRIMARY KEY (`LID`)
+     `version` INT,
 );""".format(
         db_table_lexemes
     )
@@ -109,6 +115,7 @@ mycursor.execute(
      `QID` INT,
      `lemma` TEXT CHARACTER SET utf8 NOT NULL,
      `gloss` TEXT CHARACTER SET utf8 NOT NULL,
+     `version` INT,
      PRIMARY KEY (`lang`,`QID`)
 );""".format(
         db_table_texts
@@ -119,16 +126,28 @@ print("Running Query…")
 res = runSPARQLquery(sparql)
 
 print("Collection results…")
-sql = "INSERT IGNORE INTO {} (lang, QID, LID, Status) VALUES (%s, %s, %s, %s)".format(
-    db_table_main
+sql = """INSERT INTO {0}
+         (lang, QID, LID, Status, version)
+         VALUES
+         (%s, %s, %s, %s, {1})
+         ON DUPLICATE KEY UPDATE version = {1}""".format(
+    db_table_main, dataversion
 )
 values = []
-text_sql = "INSERT IGNORE INTO {} (lang, QID, lemma, gloss) VALUES (%s, %s, %s, %s)".format(
-    db_table_texts
+text_sql = """INSERT INTO {0}
+         (lang, QID, lemma, gloss, version)
+         VALUES
+         (%s, %s, %s, %s, {1})
+         ON DUPLICATE KEY UPDATE version = {1}""".format(
+    db_table_texts, dataversion
 )
 text_values = []
-lexeme_sql = "INSERT IGNORE INTO {} (lemma, category, genus) VALUES (%s, %s, %s)".format(
-    db_table_lexemes
+lexeme_sql = """INSERT INTO {0}
+         (lemma, category, genus, version)
+         VALUES
+         (%s, %s, %s, {1})
+         ON DUPLICATE KEY UPDATE version = {1}""".format(
+    db_table_lexemes, dataversion
 )
 lexeme_values = []
 for row in res:
@@ -182,3 +201,11 @@ mycursor.execute(
 sql = "INSERT IGNORE INTO {} (lang, code) VALUES (%s, %s)".format(db_table_lang_codes)
 mycursor.executemany(sql, langlist)
 mydb.commit()
+
+
+# Delete old entries
+mycursor.execute(
+    """DELETE FROM {} WHERE version < {} and status = 0""".format(
+        db_table_main, dataversion
+    )
+)
