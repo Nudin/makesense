@@ -118,10 +118,12 @@ def getcandidates():
     cursor = db.connection.cursor()
     cursor.execute(
         """
-        SELECT lemma, matches.QID, LID, matches.lang, gloss
+        SELECT lemma, matches.QID, matches.LID, matches.lang, gloss, category, genus
         FROM matches
         JOIN labels
             on matches.QID = labels.QID and matches.lang = labels.lang
+        JOIN lexfeatures
+            on matches.LID = lexfeatures.LID
         WHERE
             status = 0 and matches.lang = %s
         ORDER BY RAND()

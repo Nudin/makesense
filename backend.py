@@ -102,8 +102,8 @@ mycursor.execute(
      `LID` INT,
      `category` INT,
      `genus` INT,
-     PRIMARY KEY (`LID`)
      `version` INT,
+     PRIMARY KEY (`LID`)
 );""".format(
         db_table_lexemes
     )
@@ -143,7 +143,7 @@ text_sql = """INSERT INTO {0}
 )
 text_values = []
 lexeme_sql = """INSERT INTO {0}
-         (lemma, category, genus, version)
+         (lid, category, genus, version)
          VALUES
          (%s, %s, %s, {1})
          ON DUPLICATE KEY UPDATE version = {1}""".format(
@@ -158,8 +158,8 @@ for row in res:
     lemma = row["lemma"]["value"]
     desc = row["desc"]["value"]
 
-    cat = row["cat"]["value"]
-    genus = row["genus"]["value"]
+    cat = int(row["cat"]["value"][32:])
+    genus = int(row["genus"]["value"][32:])
 
     values.append((lang, qid, lid, 0))
     text_values.append((lang, qid, lemma, desc))
@@ -176,6 +176,7 @@ try:
     mycursor.executemany(text_sql, text_values)
     mycursor.executemany(lexeme_sql, lexeme_values)
 except:
+    print("Problem executing:")
     print(mycursor.statement)
 
 mydb.commit()

@@ -8,13 +8,13 @@ div {
 
 #current {
   margin: 2em auto;
-  display: block;
+  display: none;
   width: 25em;
 }
 
 #previous {
   margin: 5em auto;
-  display: block;
+  display: none;
   width: 30em;
 }
 
@@ -49,4 +49,8 @@ button {
 .message {
 	margin-bottom: 1em;
 	color: grey;
+}
+.lexdata {
+	font-weight: normal;
+	color: #444;
 }
