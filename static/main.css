@@ -23,6 +23,40 @@ body {
 	margin-left: 20px;
 }
 
+.info-symbol-description {
+	display: none;
+	height: 5em;
+	width: 25em;
+	margin-top: 53px;
+	padding-left: 10px;
+	padding-bottom: 8em;
+	position: absolute;
+	border: 1px solid grey;
+}
+
+.info-symbol-description p, h2 {
+	margin: 5px;
+}
+
+#info-symbol:hover + .info-symbol-description {
+	display: block;
+
+}
+
+#stat-symbol {
+	position: absolute;
+	float: left;
+	margin-left: 60px;
+	margin-top: 15px;
+}
+
+.fa {
+	color: black;
+	float: left;
+	margin-left: 100px;
+	margin-top: 15px;
+}
+
 #login {
 	float: right;	
 	padding: 7.75px 7.5px;
