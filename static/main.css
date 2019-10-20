@@ -1,61 +1,138 @@
 body {
-	margin: 1em 5em;
+	margin: 0;
 	font-family: 'Open Sans', Arial, sans-serif;
+	background-color: #eaecf0;
 }
 
-div {
-	
+#header {
+	grid-row-start: 1;
+	grid-column: 1 / 4;
+	width: 100%;
+	height: 53px;
+	display: inline-block;
+	float: right;
+	box-shadow: 0px 0px 10px grey;
+	background-color: #f8f9fa;
 }
 
-#current {
-  margin: 2em auto;
-  display: block;
-  width: 30em;
-  text-align: center;
+#info-symbol {
+	position: absolute;
+	float: left;
+	font-size: 25px;
+	line-height: 0px;
+	margin-left: 20px;
 }
 
-#previous {
-  margin: 2em auto;
-  display: block;
-  width: 30em;
-  text-align: center;
+.info-symbol-description {
+	display: none;
+	height: 5em;
+	width: 25em;
+	margin-top: 53px;
+	padding-left: 10px;
+	padding-bottom: 8em;
+	position: absolute;
+	border: 1px solid grey;
+}
+
+.info-symbol-description p, h2 {
+	margin: 5px;
+}
+
+#info-symbol:hover + .info-symbol-description {
+	display: block;
+
+}
+
+#stat-symbol {
+	position: absolute;
+	float: left;
+	margin-left: 60px;
+	margin-top: 15px;
+}
+
+.fa {
+	color: black;
+	float: left;
+	margin-left: 100px;
+	margin-top: 15px;
 }
 
 #login {
-	margin-right: 3em;
-	margin-top: 1em;
 	float: right;	
-	font-weight: bold;
-	padding: 0.5em 1.5em;		
+	padding: 7.75px 7.5px;
+	margin: 6.75px 7.5px;
+	border: 1px solid grey;
+	border-radius: 5px;
 }
 
 #login a {
 	text-decoration: none;
-}
-
-#login:hover {
-	background-color: rgba(0, 128, 255, 0.5);
-	transition: background-color 0.3s ease-in;
+	color: black;
 }
 
 #greeting {
-	display: inline-block;
+	float: right;
 }
 
-#languageselector {
-	margin-left: 0.5em;
+.grid-container {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-rows: 53px auto auto auto auto auto;
+}
+
+#heading {
+	height: 38px;
+	margin-top: 38px;
+	margin-bottom: 0;
+	grid-column-start: 2;
+	grid-row-start: 2;
+	font-size: 26px;
+}
+
+#subheading {
+	margin-top: 0;
+	margin-bottom: 28px;
+	height: 28px;
+	align-self: start;
+	grid-column-start: 2;
+	grid-row-start: 3;
+}
+
+#current {
+	grid-column: 2 / 3;
+	grid-row-start: 4;
+	background-color: white;
+	text-align: center;
+	justify-self: stretch;
+	align-self: stretch;
+}
+
+#previous {
+	padding: 15px 0 0 15px;
+	justify-self: stretch;
+	align-self: stretch;
+	border: 1px solid grey;
+	margin-top: 44.5px; /* 28px as in UX request + 16.5px due to buttons */
+	grid-column: 2 / 3;
+	grid-row-start: 5;
 }
 
 .lemma {
+	color: #3366cc;
 	font-size: 1.5em;
 	font-weight: bold;
-	padding: 1em;
 }
 
 .description {
-	padding: 1em;
+	padding-bottom: 28px;
+	color: #3366cc;
 }
 
+#previous-lemma-description * {
+	display: inline-grid;
+}
+
+/*	not in use
 .QID {
 	display: inline-block;
 	margin: 0 0 0.75em 1em;
@@ -65,28 +142,78 @@ div {
 	display: inline-block;
 	margin: 0 1em;
 }
-
-button {
-	margin: 0.5em;
-}
+*/
 
 .message {
+	font-weight: bold;
 	margin-bottom: 1em;
-	color: grey;
+}
+
+#buttons {
+	margin-bottom: -24.5px; /* 8px to bottom of the div, +16.5px (roughly half of the button size)*/
 }
 
 #rejectbtn, #nextbtn, #savebtn {
+	margin: 0.5em;
 	padding: 0.5em;
-	width: 10em;
+	width: 8em;
+	font-size: 16px;
 }
 
-.header {
-	margin: 0 auto 3em auto;
-	width: max-content;
+#rejectbtn:hover, #nextbtn:hover {
+	background-color: #c1d1f0;
+	transition: 0.1s linear;
 }
+
+#rejectbtn {
+	background-color: #f8f9fa;
+	border: 1px solid red;
+	border-radius: 5px;
+}
+
+#savebtn {
+	background-color: #3366cc;
+	color: white;
+	border-radius: 5px;
+	width: 15em;
+}
+
+#nextbtn {
+	background-color: #f8f9fa;
+	border: 1px solid grey;
+	border-radius: 5px;
+}
+
+/* footer */
+
 .stickyfooter {
+	grid-row-start: 6;
+	grid-column: 1 / 4;
+}
+
+.footer {
+	grid-row-start: 6;
+	grid-column: 1 / 4;
+	display: inline-block;
+	width: 100%;
+	bottom: 0;
+	height: 53px;
 	position: absolute;
-	bottom: 1em;
-	left: 50%;
-	transform: translateX(-50%);
+	text-align: center;
+}
+
+#languagesetting {
+	display: inline-block;
+	position: absolute;
+	float: right;
+	right: 12px;
+}
+
+#languageselector {
+	text-align: center;
+	font-size: 20px;
+	padding: 5.75px 5.5px;
+	margin: 6.75px 7.5px;
+	border: 1px solid grey;
+	border-radius: 5px;
 }
