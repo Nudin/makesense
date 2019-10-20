@@ -31,12 +31,19 @@
                 <p id="heading">MachtSinn</p>
                 <p id="subheading">A game to add senses to Wikidata Lexemes</p>
 
-                
+
                 <div id="next"></div>
 
                 <div id="current">
                         <p>Is</p>
-                        <div class="lemma"></div>                                        
+                        <div class="lexeme">
+                            <span class="lemma"></span>
+                            <span class="lexdata">(
+                                <span class="lexcat"></span>,
+                                <span class="genus"></span>
+                                )
+                            </span>
+                        </div>
                         <p>a common meaning (sense) for the given Word?</p>
                         <div class="description"></div>
                         <!--
@@ -47,15 +54,22 @@
                 <div id="buttons">
                         <button id="rejectbtn">No match</button>
                         <button id="savebtn">It's a match</button>
-                        <button id="nextbtn">Skip</button>                    
+                        <button id="nextbtn">Skip</button>
                 </div>
                 {% endif %}
                 </div>
 
-                <div id="previous">                    
+                <div id="previous">
                         <div class="message">Last Saved</div>
-                        <div id="previous-lemma-description">                  
-                                <div class="lemma"></div>
+                        <div id="previous-lemma-description">
+                        <div class="lexeme">
+                            <span class="lemma"></span>
+                            <span class="lexdata">(
+                                <span class="lexcat"></span>,
+                                <span class="genus"></span>
+                                )
+                            </span>
+                        </div>
                                 <p>is a common meaning for</p>
                                 <div class="description"></div>
                         </div>                        

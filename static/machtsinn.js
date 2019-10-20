@@ -22,6 +22,8 @@ var main = (function () {
   var row = null
   var previous = null
   var lang = 1860
+  var langcode = 'en'
+  var cache = {}
 
   var load = function () {
     return new Promise(function (resolve, reject) {
@@ -39,9 +41,38 @@ var main = (function () {
     })
   }
 
-  var show = function (state, row) {
+  function getLabel (qid, langcode) {
+    qid = 'Q' + qid
+    return new Promise(function (resolve, reject) {
+      var xhttp = new XMLHttpRequest()
+      xhttp.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+          const res = JSON.parse(this.responseText)
+          resolve(res.entities[qid].labels[langcode].value)
+        }
+      }
+      xhttp.open('GET', 'https://www.wikidata.org/w/api.php?origin=*&action=wbgetentities&format=json&ids=' + qid + '&props=labels&languages=' + langcode, true)
+      xhttp.setRequestHeader('Content-type', 'application/json')
+      xhttp.send()
+    })
+  }
+
+  async function getLabelCached (qid) {
+    if (qid in cache) {
+      return cache[qid]
+    } else {
+      const value = await getLabel(qid, langcode)
+      cache[qid] = value
+      return value
+    }
+  }
+
+  var show = function (state, row, labels) {
     var element = document.getElementById(state)
+    element.style.display = 'block'
     element.getElementsByClassName('lemma')[0].textContent = row[0]
+    element.getElementsByClassName('lexcat')[0].textContent = labels[0]
+    element.getElementsByClassName('genus')[0].textContent = labels[1]
     element.getElementsByClassName('description')[0].textContent = row[4]
     element.getElementsByClassName('QID')[0].innerHTML =
       '<a href="https://www.wikidata.org/wiki/Q' +
@@ -60,12 +91,17 @@ var main = (function () {
   var showLast = function () {
     var element = document.getElementById('previous')
     element.getElementsByClassName('message')[0].textContent = 'Saved:'
-    show('previous', previous)
+    const oldlabels = [cache[previous[5]], cache[previous[6]]]
+    show('previous', previous, oldlabels)
   }
 
   var showCurrent = function () {
     row = data.pop()
-    show('current', row)
+    const p1 = getLabelCached(row[5])
+    const p2 = getLabelCached(row[6])
+    Promise.all([p1, p2]).then(function (labels) {
+      show('current', row, labels)
+    })
   }
 
   var next = function () {
@@ -128,6 +164,7 @@ var main = (function () {
 
   var init = function () {
     data = []
+    cache = []
     var parameters = new URLSearchParams(window.location.search)
     lang = parameters.get('lang') || 1860
     load().then(function () {
@@ -141,8 +178,10 @@ var main = (function () {
     rejectbtn.onclick = rejectAndNext
 
     var langsel = document.getElementById('languageselector')
+    langcode = langsel.options[langsel.selectedIndex].innerHTML
     langsel.onchange = function () {
       lang = langsel.value
+      langcode = langsel.options[langsel.selectedIndex].innerHTML
       history.pushState(lang, '', window.location.pathname + '?lang=' + lang)
       init()
     }
@@ -154,7 +193,8 @@ var main = (function () {
       return data
     },
     show: showCurrent,
-    buttonpressed: next
+    buttonpressed: next,
+    getlabel: getLabelCached
   }
 })()
 
