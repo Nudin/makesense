@@ -187,6 +187,18 @@ var main = (function () {
     }
   }
 
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'r') {
+      document.getElementById('rejectbtn').click();
+    }
+    else if (event.key === 'k') {
+      document.getElementById('nextbtn').click();
+    }
+    else if (event.key === 's') {
+      document.getElementById('savebtn').click();
+    }
+  });
+
   return {
     init: init,
     get: function () {
