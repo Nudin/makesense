@@ -74,18 +74,10 @@ var main = (function () {
     element.getElementsByClassName('lexcat')[0].textContent = labels[0]
     element.getElementsByClassName('genus')[0].textContent = labels[1]
     element.getElementsByClassName('description')[0].textContent = row[4]
-    element.getElementsByClassName('QID')[0].innerHTML =
-      '<a href="https://www.wikidata.org/wiki/Q' +
-      row[1] +
-      '">Q' +
-      row[1] +
-      '</a>'
-    element.getElementsByClassName('LID')[0].innerHTML =
-      '<a href="https://www.wikidata.org/wiki/Lexeme:L' +
-      row[2] +
-      '">L' +
-      row[2] +
-      '</a>'
+    element.getElementsByClassName('description')[0].href =
+      'https://www.wikidata.org/wiki/Q' + row[1]
+    element.getElementsByClassName('lemma')[0].href =
+      'https://www.wikidata.org/wiki/Lexeme:L' + row[2]
   }
 
   var showLast = function () {

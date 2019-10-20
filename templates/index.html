@@ -6,90 +6,79 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 {% endblock %}
 {% block body %}
-        <div class="grid-container">
+<div class="grid-container">
 
-                <div id="header">
-                        <p id="info-symbol">&#9432;</p>
-                        <div class="info-symbol-description">
-                                <h2>Lexeme</h2>
-                                <p>A basic lexical unit of a language consisting of one word or several words, the elements of which do not separately convey the meaning of the whole.</p>
-                                <h2>Sense</h2>
-                                <p>A way in which an expression or a situation can be interpreted; a meaning.</p>
-                        </div>
-                        <a href="./statistics" title="Statistics"><p id="stat-symbol">&#128200;</p></a>
-                        <a href="https://github.com/Nudin/makesense" title="Code on Github"><p class="fa fa-github" style="font-size:22px"></p></a>
-                        {% if username %}
-                        <p id="greeting">Hello {{ username }}!</p>
-                        <div id="login"><a href="{{ url_for('logout') }}">Logout</a></div>
-
-                        {% else %}
-                        <p id="greeting">You have to log in with Wikidata to edit</p>
-                        <div id="login"><a href="{{ url_for('login') }}">Login</a></div>
-                        {% endif %}
-                </div>
-
-                <p id="heading">MachtSinn</p>
-                <p id="subheading">A game to add senses to Wikidata Lexemes</p>
-
-
-                <div id="next"></div>
-
-                <div id="current">
-                        <p>Is</p>
-                        <div class="lexeme">
-                            <span class="lemma"></span>
-                            <span class="lexdata">(
-                                <span class="lexcat"></span>,
-                                <span class="genus"></span>
-                                )
-                            </span>
-                        </div>
-                        <p>a common meaning (sense) for the given Word?</p>
-                        <div class="description"></div>
-                        <!--
-                        <div class="QID"><a href="https://www.wikidata.org/wiki/Q1431456">Q1431456</a></div>
-                        <div class="LID"><a href="https://www.wikidata.org/wiki/Lexeme:L4332">L4332</a></div>
-                        -->
-                {% if username %}
-                <div id="buttons">
-                        <button id="rejectbtn">No match</button>
-                        <button id="savebtn">It's a match</button>
-                        <button id="nextbtn">Skip</button>
-                </div>
-                {% endif %}
-                </div>
-
-                <div id="previous">
-                        <div class="message">Last Saved</div>
-                        <div id="previous-lemma-description">
-                        <div class="lexeme">
-                            <span class="lemma"></span>
-                            <span class="lexdata">(
-                                <span class="lexcat"></span>,
-                                <span class="genus"></span>
-                                )
-                            </span>
-                        </div>
-                                <p>is a common meaning for</p>
-                                <div class="description"></div>
-                        </div>                        
-                    <!--
-                    <div class="QID"><a href="https://www.wikidata.org/wiki/Q268390">Q268390</a></div>
-                    <div class="LID"><a href="https://www.wikidata.org/wiki/Lexeme:L18864">L18864</a></div>
-                    -->
-                </div>
-
-                <div class="stickyfooter">
-                        <div class="footer">
-                                <div id="languagesetting">
-                                <label>Language</label>
-                                <select id="languageselector">
-                                        {% for lang in languages %}
-                                        <option value="{{lang[1]}}" {{'selected' if currentlang == lang[1]}}>{{lang[0]}}</option>
-                                        {% endfor %}
-                                </select>
-                                </div>
-                        </div>
-                </div>
+    <div id="header">
+        <p id="info-symbol">&#9432;</p>
+        <div class="info-symbol-description">
+            <h2>Lexeme</h2>
+            <p>A basic lexical unit of a language consisting of one word or several words, the elements of which do not separately convey the meaning of the whole.</p>
+            <h2>Sense</h2>
+            <p>A way in which an expression or a situation can be interpreted; a meaning.</p>
         </div>
+        <a href="./statistics" title="Statistics"><p id="stat-symbol">&#128200;</p></a>
+        <a href="https://github.com/Nudin/makesense" title="Code on Github"><p class="fa fa-github" style="font-size:22px"></p></a>
+        {% if username %}
+        <p id="greeting">Hello {{ username }}!</p>
+        <div id="login"><a href="{{ url_for('logout') }}">Logout</a></div>
+
+        {% else %}
+        <p id="greeting">You have to log in with Wikidata to edit</p>
+        <div id="login"><a href="{{ url_for('login') }}">Login</a></div>
+        {% endif %}
+    </div>
+
+    <p id="heading">MachtSinn</p>
+    <p id="subheading">A game to add senses to Wikidata Lexemes</p>
+
+    <div id="current">
+        <p>Is</p>
+        <div><a class="description"></a></div>
+        <p>a common meaning (sense) for the given Word?</p>
+        <div class="lexeme">
+            <span><a class="lemma"></a></span>
+            <span class="lexdata">(
+                <span class="lexcat"></span>,
+                <span class="genus"></span>
+                )
+            </span>
+        </div>
+        {% if username %}
+        <div id="buttons">
+            <button id="rejectbtn">No match</button>
+            <button id="savebtn">It's a match</button>
+            <button id="nextbtn">Skip</button>
+        </div>
+        {% endif %}
+    </div>
+
+    <div id="previous">
+        <div class="message">Last Saved</div>
+        <div id="previous-lemma-description">
+            <div><a class="description"></a></div>
+            <p>is a common meaning for</p>
+            <div class="lexeme">
+                <span><a class="lemma"></a></span>
+                <span class="lexdata">(
+                    <span class="lexcat"></span>,
+                    <span class="genus"></span>
+                    )
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="stickyfooter">
+        <div class="footer">
+            <div id="languagesetting">
+                <label>Language</label>
+                <select id="languageselector">
+                    {% for lang in languages %}
+                    <option value="{{lang[1]}}" {{'selected' if currentlang == lang[1]}}>{{lang[0]}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

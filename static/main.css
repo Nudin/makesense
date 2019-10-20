@@ -105,6 +105,7 @@ body {
 	text-align: center;
 	justify-self: stretch;
 	align-self: stretch;
+	display: none;
 }
 
 #previous {
@@ -115,6 +116,7 @@ body {
 	margin-top: 44.5px; /* 28px as in UX request + 16.5px due to buttons */
 	grid-column: 2 / 3;
 	grid-row-start: 5;
+	display: none;
 }
 
 .lemma {
