@@ -58,6 +58,9 @@ var main = (function () {
   }
 
   async function getLabelCached (qid) {
+    if( qid === null ) {
+      return null
+    }
     if (qid in cache) {
       return cache[qid]
     } else {
@@ -72,7 +75,15 @@ var main = (function () {
     element.style.display = 'block'
     element.getElementsByClassName('lemma')[0].textContent = row[0]
     element.getElementsByClassName('lexcat')[0].textContent = labels[0]
-    element.getElementsByClassName('genus')[0].textContent = labels[1]
+    if (labels[1] !== null) {
+      element.getElementsByClassName('genus')[0].textContent = labels[1]
+      element.getElementsByClassName('joiner')[0].style.display = 'inline'
+      element.getElementsByClassName('genus')[0].style.display = 'inline'
+    }
+    else {
+      element.getElementsByClassName('genus')[0].style.display = 'none'
+      element.getElementsByClassName('joiner')[0].style.display = 'none'
+    }
     element.getElementsByClassName('description')[0].textContent = row[4]
     element.getElementsByClassName('description')[0].href =
       'https://www.wikidata.org/wiki/Q' + row[1]

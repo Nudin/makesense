@@ -159,7 +159,10 @@ for row in res:
     desc = row["desc"]["value"]
 
     cat = int(row["cat"]["value"][32:])
-    genus = int(row["genus"]["value"][32:])
+    try:
+        genus = int(row["genus"]["value"][32:])
+    except KeyError:
+        genus = None
 
     values.append((lang, qid, lid, 0))
     text_values.append((lang, qid, lemma, desc))
@@ -181,6 +184,7 @@ except:
 
 mydb.commit()
 
+exit(0)
 
 # Query for the wikimedia language codes
 with open("querylangcodes.sparql") as f:

@@ -1,8 +1,8 @@
 SELECT * WHERE {
   ?lexeme wikibase:lemma ?lemma;
          dct:language ?lang;
-         wikibase:lexicalCategory ?cat;
-         wdt:P5185 ?genus.
+         wikibase:lexicalCategory ?cat.
+  OPTIONAL { ?lexeme wdt:P5185 ?genus. } .
   FILTER NOT EXISTS {
     ?lexeme ontolex:sense ?sense.
     ?sense wdt:P5137 ?item.
