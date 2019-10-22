@@ -127,6 +127,9 @@ body {
 	display: none;
 }
 
+#current .lexeme {
+	padding: 2em 0;
+}
 .lemma {
 	color: #3366cc;
 	font-size: 1.5em;
@@ -134,25 +137,12 @@ body {
 }
 
 .description {
-	padding-bottom: 28px;
 	color: #3366cc;
 }
 
-#previous-lemma-description * {
-	display: inline-grid;
+#current .description {
+	padding-bottom: 28px;
 }
-
-/*	not in use
-.QID {
-	display: inline-block;
-	margin: 0 0 0.75em 1em;
-}
-
-.LID {
-	display: inline-block;
-	margin: 0 1em;
-}
-*/
 
 .message {
 	font-weight: bold;

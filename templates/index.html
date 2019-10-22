@@ -19,12 +19,12 @@
         <a href="./statistics" title="Statistics"><p id="stat-symbol">&#128200;</p></a>
         <a href="https://github.com/Nudin/makesense" title="Code on Github"><p class="fa fa-github" style="font-size:22px"></p></a>
         {% if username %}
-        <p id="greeting">Hello {{ username }}!</p>
         <div id="login"><a href="{{ url_for('logout') }}">Logout</a></div>
+        <p id="greeting">Hello {{ username }}!</p>
 
         {% else %}
-        <p id="greeting">You have to log in with Wikidata to edit</p>
         <div id="login"><a href="{{ url_for('login') }}">Login</a></div>
+        <p id="greeting">You have to log in with Wikidata to edit</p>
         {% endif %}
     </div>
 
@@ -33,9 +33,6 @@
 
     <div id="message"></div>
     <div id="current">
-        <p>Is</p>
-        <div><a class="description"></a></div>
-        <p>a common meaning (sense) for the given Word?</p>
         <div class="lexeme">
             <span><a class="lemma"></a></span>
             <span class="lexdata">(
@@ -44,6 +41,9 @@
                 )
             </span>
         </div>
+        <p>Is</p>
+        <div>“<a class="description"></a>”</div>
+        <p>a common meaning (sense) for the given Word?</p>
         {% if username %}
         <div id="buttons">
             <button id="rejectbtn">No match</button>
@@ -56,7 +56,7 @@
     <div id="previous">
         <div class="message">Last Saved</div>
         <div id="previous-lemma-description">
-            <div><a class="description"></a></div>
+            <div>“<a class="description"></a>”</div>
             <p>is a common meaning for</p>
             <div class="lexeme">
                 <span><a class="lemma"></a></span>

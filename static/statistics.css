@@ -1,0 +1,9 @@
+body {
+	margin: 2em;
+	font-family: 'Open Sans', Arial, sans-serif;
+	background-color: #eaecf0;
+}
+.header {
+	margin: auto;
+	width: max-content;
+}
