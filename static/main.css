@@ -107,6 +107,14 @@ body {
 	align-self: stretch;
 	display: none;
 }
+#message {
+	grid-column: 2 / 3;
+	grid-row-start: 4;
+	text-align: center;
+	justify-self: stretch;
+	align-self: stretch;
+	display: none;
+}
 
 #previous {
 	padding: 15px 0 0 15px;

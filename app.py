@@ -98,10 +98,10 @@ def index():
         """SELECT languages.code, languages.lang
         from matches join languages
         on matches.lang = languages.lang
-        where status = %s
+        where status = %s or languages.lang = %s
         GROUP BY languages.lang
         ORDER BY languages.code;""",
-        (0,),
+        (0, lang),
     )
     languages = cursor.fetchall()
     cursor.close()

@@ -88,6 +88,12 @@ var main = (function () {
   }
 
   var showCurrent = function () {
+    if(data.length === 0) {
+      document.getElementById('message').textContent = "No more potential matches for this language."
+      document.getElementById('message').style.display = "block"
+      document.getElementById('current').style.display = "none"
+      return
+    } 
     row = data.pop()
     const p1 = getLabelCached(row[5])
     const p2 = getLabelCached(row[6])
