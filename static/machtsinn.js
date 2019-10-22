@@ -162,12 +162,16 @@ var main = (function () {
     load().then(function () {
       showCurrent()
     })
-    var nextbtn = document.getElementById('nextbtn')
-    nextbtn.onclick = next
-    var sndbtn = document.getElementById('savebtn')
-    sndbtn.onclick = sendAndNext
-    var rejectbtn = document.getElementById('rejectbtn')
-    rejectbtn.onclick = rejectAndNext
+
+    try {
+      var nextbtn = document.getElementById('nextbtn')
+      nextbtn.onclick = next
+      var sndbtn = document.getElementById('savebtn')
+      sndbtn.onclick = sendAndNext
+      var rejectbtn = document.getElementById('rejectbtn')
+      rejectbtn.onclick = rejectAndNext
+    }
+    catch(e) {} // Buttons don't exist if user isn't logged in
 
     var langsel = document.getElementById('languageselector')
     langcode = langsel.options[langsel.selectedIndex].innerHTML
