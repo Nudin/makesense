@@ -58,7 +58,7 @@ body {
 }
 
 #login {
-	float: right;	
+	float: right;
 	padding: 7.75px 7.5px;
 	margin: 6.75px 7.5px;
 	border: 1px solid grey;
@@ -150,7 +150,7 @@ body {
 }
 
 #buttons {
-	margin-bottom: -24.5px; /* 8px to bottom of the div, +16.5px (roughly half of the button size)*/
+	margin-bottom: 8px;
 }
 
 #rejectbtn, #nextbtn, #savebtn {
