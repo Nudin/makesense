@@ -1,21 +1,74 @@
-SELECT * WHERE {
-  ?lexeme wikibase:lemma ?lemma;
-         dct:language ?lang;
+SELECT * WITH {
+  SELECT * 
+  WHERE {
+    ?lexeme wikibase:lemma ?lemma;
+         dct:language wd:Q1860;
          wikibase:lexicalCategory ?cat.
-  OPTIONAL { ?lexeme wdt:P5185 ?genus. } .
-  FILTER NOT EXISTS {
+    OPTIONAL { ?lexeme wdt:P5185 ?genus. } .
+    FILTER NOT EXISTS {
     ?lexeme ontolex:sense ?sense.
     ?sense wdt:P5137 ?item.
   }.
-  FILTER NOT EXISTS { ?lexeme wdt:P5402 ?homograph }.
-  
-  ?item rdfs:label ?lemma.
-  ?item schema:description ?desc.	FILTER(LANG(?desc) = LANG(?lemma)).
   FILTER NOT EXISTS { ?item a wikibase:Property}.
+  FILTER NOT EXISTS { ?lexeme wdt:P5402 ?homograph }.
+  ?item rdfs:label ?lemma.
+  ?item schema:description ?desc.	
+  FILTER(LANG(?desc) = LANG(?lemma)).
+  }} AS %i
+WHERE {
+  include %i
   # Filter out common false-positives
   FILTER NOT EXISTS { ?item wdt:P131 ?_ }.
   FILTER NOT EXISTS {
-    VALUES ?not { wd:Q4167410 wd:Q101352 wd:Q11424 wd:Q3305213 wd:Q482994 wd:Q13417114 wd:Q7366 wd:Q208569 wd:Q15632617 wd:Q21191270 wd:Q5185279 }.
-    ?item wdt:P31 ?not
-  }
+    VALUES ?not { 
+    wd:Q4167410 
+    wd:Q101352 
+	wd:Q13417114 
+	wd:Q15632617  
+	wd:Q215380  # bands
+	wd:Q23786   # eye color
+	wd:Q40056   # software
+	wd:Q3491429 # military terms
+	wd:Q7187    # gene
+	wd:Q19798644 # wikibase model terms
+	wd:Q11668273 # shogi pieces
+	wd:Q17155032 # type of software
+	wd:Q17638537 # routine - fix computer terminology
+	wd:Q11446    # ships
+	wd:Q2235308  # types of ships
+	wd:Q17537576 # any creative work incl. music, video, text, etc.
+	wd:Q8134     # economics
+	wd:Q20202269 # music terms
+	wd:Q395        # math
+    wd:Q494452 # heraldry
+    wd:Q1391494 # technical terminology
+    wd:Q57814795 # domesticated animal
+    wd:Q1725664 # terminology of any kind
+    wd:Q43229  # organization of any kind
+    wd:Q147276  # names of any kind
+    wd:Q15642541 # human settlement definions
+    wd:Q5        # human
+    wd:Q4167836  # wikimedia cat
+  }.
+    ?item wdt:P31/(wdt:P279*) ?not  }.
+  # filter on properties:
+  FILTER NOT EXISTS { 
+    VALUES ?not2 {
+      wdt:P688 # gene stuff
+      wdt:P195 # collection (of art)
+      wdt:P1482 # stack exchange
+      }
+      ?item ?not2 ?_ }. 
+  # anything not having a P31 has to go too (this is the first thing to relax when few positives are left)
+  #filter not exists {?item wdt:P31 ?dummy.} # stuff without P31 which is usually false positives 
+  # special terminology often match these descriptions
+  FILTER (!regex(?desc, '.*theory.*')) .      
+  FILTER (!regex(?desc, '.*mathemat.*')) .
+  FILTER (!regex(?desc, '.*geolog.*')) .
+  FILTER (!regex(?desc, '.*anatomy.*')) .
+  FILTER (!regex(?desc, '.*military.*')) .
+  FILTER (!regex(?desc, '.*taxonomic.*')) .
+  FILTER (!regex(?desc, '.*C++.*')) .
+  FILTER (!regex(?desc, '.*Unix.*')) .
+  FILTER (!regex(?desc, '.* law .*')) .
 }
