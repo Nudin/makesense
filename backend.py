@@ -58,6 +58,9 @@ dataversion = 2
 with open("query.sparql") as f:
     sparql = f.read()
 
+#######################
+# Open SQL-Connection #
+#######################
 try:
     mydb = mysql.connector.connect(
         host=db_host,
@@ -84,6 +87,10 @@ except:
 
 mycursor = mydb.cursor()
 
+
+#######################
+# Create Tables       #
+#######################
 mycursor.execute(
     """CREATE TABLE IF NOT EXISTS `{}` (
      `lang` INT,
@@ -122,9 +129,15 @@ mycursor.execute(
     )
 )
 
+#############
+# Run Query #
+#############
 print("Running Query…")
 res = runSPARQLquery(sparql)
 
+#########################
+# Add Results to tables #
+#########################
 print("Collection results…")
 sql = """INSERT INTO {0}
          (lang, QID, LID, Status, version)
@@ -186,7 +199,9 @@ mydb.commit()
 
 exit(0)
 
-# Query for the wikimedia language codes
+##########################################
+# Query for the wikimedia language codes #
+##########################################
 with open("querylangcodes.sparql") as f:
     sparql = f.read()
 
@@ -208,7 +223,9 @@ mycursor.executemany(sql, langlist)
 mydb.commit()
 
 
-# Delete old entries
+######################
+# Delete old entries #
+######################
 mycursor.execute(
     """DELETE FROM {} WHERE version < {} and status = 0""".format(
         db_table_main, dataversion
