@@ -25,6 +25,10 @@ var main = (function () {
   var langcode = 'en'
   var cache = {}
 
+  /**
+    * Request a number of potential matches from the app's API and save them in
+    * the queue
+    */
   var load = function () {
     return new Promise(function (resolve, reject) {
       var xhttp = new XMLHttpRequest()
@@ -41,6 +45,12 @@ var main = (function () {
     })
   }
 
+  /**
+    * Get the label of an item via Wikipedia's API
+    *
+    * qid: qid without 'Q'
+    * langcode: Wikimedia langcode ('en', 'de'…)
+    */
   function getLabel (qid, langcode) {
     qid = 'Q' + qid
     return new Promise(function (resolve, reject) {
@@ -51,14 +61,19 @@ var main = (function () {
           resolve(res.entities[qid].labels[langcode].value)
         }
       }
-      xhttp.open('GET', 'https://www.wikidata.org/w/api.php?origin=*&action=wbgetentities&format=json&ids=' + qid + '&props=labels&languages=' + langcode, true)
+      xhttp.open('GET', 'https://www.wikidata.org/w/api.php?' +
+                        'origin=*&action=wbgetentities&format=json' +
+                        '&ids=' + qid + '&props=labels&languages=' + langcode, true)
       xhttp.setRequestHeader('Content-type', 'application/json')
       xhttp.send()
     })
   }
 
+  /**
+    * Wrapper around getLabel with a cache to avoid unnecessary requests
+    */
   async function getLabelCached (qid) {
-    if( qid === null ) {
+    if (qid === null) {
       return null
     }
     if (qid in cache) {
@@ -70,6 +85,9 @@ var main = (function () {
     }
   }
 
+  /**
+    * Display the given potential match
+    */
   var show = function (state, row, labels) {
     var element = document.getElementById(state)
     element.style.display = 'block'
@@ -79,8 +97,7 @@ var main = (function () {
       element.getElementsByClassName('genus')[0].textContent = labels[1]
       element.getElementsByClassName('joiner')[0].style.display = 'inline'
       element.getElementsByClassName('genus')[0].style.display = 'inline'
-    }
-    else {
+    } else {
       element.getElementsByClassName('genus')[0].style.display = 'none'
       element.getElementsByClassName('joiner')[0].style.display = 'none'
     }
@@ -91,6 +108,9 @@ var main = (function () {
       'https://www.wikidata.org/wiki/Lexeme:L' + row[2]
   }
 
+  /**
+    * Show the last successfully saved match
+    */
   var showLast = function () {
     var element = document.getElementById('previous')
     element.getElementsByClassName('message')[0].textContent = 'Saved:'
@@ -98,13 +118,16 @@ var main = (function () {
     show('previous', previous, oldlabels)
   }
 
+  /**
+    * Display the uppermost potential match from the queue
+    */
   var showCurrent = function () {
-    if(data.length === 0) {
-      document.getElementById('message').textContent = "No more potential matches for this language."
-      document.getElementById('message').style.display = "block"
-      document.getElementById('current').style.display = "none"
+    if (data.length === 0) {
+      document.getElementById('message').textContent = 'No more potential matches for this language.'
+      document.getElementById('message').style.display = 'block'
+      document.getElementById('current').style.display = 'none'
       return
-    } 
+    }
     row = data.pop()
     const p1 = getLabelCached(row[5])
     const p2 = getLabelCached(row[6])
@@ -124,6 +147,10 @@ var main = (function () {
     }
   }
 
+  /**
+    * Send the current match as correct match to the app, so that the app adds
+    * the match in Wikidata.
+    */
   var send = function () {
     var data = new FormData()
     var current = row
@@ -146,11 +173,17 @@ var main = (function () {
     })
   }
 
+  /**
+    * Send match as 'correct' to the app and show next potential match
+    */
   var sendAndNext = function () {
     send().then(showLast)
     next()
   }
 
+  /**
+    * Send match as 'wrong' to the app and show next potential match
+    */
   var rejectAndNext = function () {
     next()
     return new Promise(function (resolve, reject) {
@@ -171,6 +204,9 @@ var main = (function () {
     })
   }
 
+  /**
+    * Set up the game and initially fill the queue of potential matches
+    */
   var init = function () {
     data = []
     cache = []
@@ -187,8 +223,7 @@ var main = (function () {
       sndbtn.onclick = sendAndNext
       var rejectbtn = document.getElementById('rejectbtn')
       rejectbtn.onclick = rejectAndNext
-    }
-    catch(e) {} // Buttons don't exist if user isn't logged in
+    } catch (e) {} // Buttons don't exist if user isn't logged in
 
     var langsel = document.getElementById('languageselector')
     langcode = langsel.options[langsel.selectedIndex].innerHTML
