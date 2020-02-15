@@ -1,55 +1,74 @@
 {% extends "layout.html" %}
 
 {% block head %}
+        <link href="/machtsinn/static/main.css" rel="stylesheet">
         <link href="/machtsinn/static/statistics.css" rel="stylesheet">
 {% endblock %}
-{% block body %}
-<div class="header"><a href=".">Main</a></div>
+{% block links %}
+        <a href="./" title="Main page"><p id="back-symbol">&#128281;</p></a>
+{% endblock %}
 
+{% block content %}
+<div class="stat">
 <h1>Senses added with MachtSinn</h1>
 <table>
         <tr>
                 <th>Language</th>
                 <th>#</th>
         </tr>
+        <tr class="total">
+                <td>Total</td>
+                <td>{{added|sum(attribute='1')}}</td>
+        </tr>
 
-        {% for row in added %}
+        {% for row in added -%}
         <tr>
                 <td>{{row[0]}}</td>
                 <td>{{row[1]}}</td>
         </tr>
         {% endfor %}
 </table>
+</div>
 
+<div class="stat">
 <h1>Senses still to inspect</h1>
 <table>
         <tr>
                 <th>Language</th>
                 <th>#</th>
         </tr>
+        <tr class="total">
+                <td>Total</td>
+                <td>{{todo|sum(attribute='1')}}</td>
+        </tr>
 
-        {% for row in todo %}
+        {% for row in todo -%}
         <tr>
                 <td>{{row[0]}}</td>
                 <td>{{row[1]}}</td>
         </tr>
         {% endfor %}
 </table>
+</div>
 
+<div class="stat">
 <h1>Wrong matches rejected</h1>
 <table>
         <tr>
                 <th>Language</th>
                 <th>#</th>
         </tr>
+        <tr class="total">
+                <td>Total</td>
+                <td>{{rejected|sum(attribute='1')}}</td>
+        </tr>
 
-        {% for row in rejected %}
+        {% for row in rejected -%}
         <tr>
                 <td>{{row[0]}}</td>
                 <td>{{row[1]}}</td>
         </tr>
         {% endfor %}
 </table>
-
-<div class="footer"><a href="https://github.com/Nudin/makesense">Code on Github</a></div>
+</div>
 {% endblock %}

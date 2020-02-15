@@ -1,9 +1,17 @@
-body {
-	margin: 2em;
-	font-family: 'Open Sans', Arial, sans-serif;
-	background-color: #eaecf0;
+.stat {
+	margin: 0 2em;
 }
-.header {
-	margin: auto;
-	width: max-content;
+tr.total {
+	font-weight: bold;
+}
+tbody tr td:last-child {
+    text-align: right;
+}
+.info-symbol-description {
+	/* dirty hack, transparent is nicer but
+	 * overlaps with the text on the statistic page */
+	background: #eaecf0;
+}
+h1 {
+	height: 3em;
 }

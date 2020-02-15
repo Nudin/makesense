@@ -1,11 +1,11 @@
 <!doctype html>
 <head>
   <title>MachtSinn – Das macht doch alles keinen Sinn!</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   {% block head %}
   {% endblock %}
 </head>
 <body>
-{% block body %}
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     <ul class=flashes>
@@ -15,5 +15,30 @@
     </ul>
   {% endif %}
 {% endwith %}
+<div class="grid-container">
+    <div id="header">
+        <p id="info-symbol">&#9432;</p>
+        <div class="info-symbol-description">
+            <h2>Lexeme</h2>
+            <p>A basic lexical unit of a language consisting of one word or
+              several words, the elements of which do not separately convey the
+              meaning of the whole.</p>
+            <h2>Sense</h2>
+            <p>A way in which an expression or a situation can be interpreted; a meaning.</p>
+        </div>
+        {% block links %}{% endblock %}
+        <a href="https://github.com/Nudin/makesense" title="Code on Github"><p class="fa fa-github" style="font-size:22px"></p></a>
+        {% if username %}
+        <p id="greeting">Hello {{ username }}!</p>
+        <div id="login"><a href="{{ url_for('logout') }}">Logout</a></div>
+
+        {% else %}
+        <p id="greeting">You have to log in with Wikidata to edit</p>
+        <div id="login"><a href="{{ url_for('login') }}">Login</a></div>
+        {% endif %}
+    </div>
+
+{% block content %}
 {% endblock %}
+</div>
 </body>

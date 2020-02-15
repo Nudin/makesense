@@ -43,7 +43,7 @@ body {
 
 }
 
-#stat-symbol {
+#stat-symbol, #back-symbol {
 	position: absolute;
 	float: left;
 	margin-left: 60px;
