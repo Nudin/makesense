@@ -185,10 +185,11 @@ var main = (function () {
     * Send match as 'wrong' to the app and show next potential match
     */
   var rejectAndNext = function () {
+    leaveEditMode()
+    var current = row
     next()
     return new Promise(function (resolve, reject) {
       var data = new FormData()
-      var current = row
       data.append('QID', current[1])
       data.append('LID', current[2])
       var xhttp = new XMLHttpRequest()
