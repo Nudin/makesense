@@ -46,7 +46,7 @@ var main = (function () {
   }
 
   /**
-    * Get the label of an item via Wikipedia's API
+    * Get the label of an item via Wikidata's API
     *
     * qid: qid without 'Q'
     * langcode: Wikimedia langcode ('en', 'de'…)
