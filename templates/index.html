@@ -22,7 +22,10 @@
             </span>
         </div>
         <p>Is</p>
-        <div>“<a class="description"></a>”</div>
+        <div id="current-description">“<a class="description"></a>”</div>
+        <input type="text" id="descriptionInput" size="40">
+        <button id="editbtn">&#9997;</button>
+        <button id="commitbtn">&check;</button>
         <p>a common meaning (sense) for the given Word?</p>
         {% if username %}
         <div id="buttons">
@@ -31,6 +34,15 @@
             <button id="nextbtn">Skip</button>
         </div>
         {% endif %}
+    </div>
+
+    <div id="editwarning" class="note">
+        <p>
+        Please change only phrasing not meaning!
+        </p>
+        <p>
+        The gloss must still match with the linked item.
+        </p>
     </div>
 
     <div id="previous">

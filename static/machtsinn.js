@@ -24,6 +24,7 @@ var main = (function () {
   var lang = 1860
   var langcode = 'en'
   var cache = {}
+  var editmode = false
 
   /**
     * Request a number of potential matches from the app's API and save them in
@@ -136,6 +137,35 @@ var main = (function () {
     })
   }
 
+  var startEditMode = function () {
+    if (!editmode) {
+      document.getElementById('descriptionInput').value = row[4]
+      document.getElementById('current-description').style.display = 'none'
+      document.getElementById('descriptionInput').style.display = 'inline'
+      document.getElementById('editbtn').style.display = 'none'
+      document.getElementById('commitbtn').style.display = 'inline'
+      document.getElementById('editwarning').style.display = 'block'
+      editmode = true
+    }
+  }
+
+  var leaveEditMode = function () {
+    if (editmode) {
+      row[4] = document.getElementById('descriptionInput').value
+      document.getElementById('current-description')
+        .getElementsByClassName('description')[0].textContent = row[4]
+      document.getElementById('current-description').style.display = 'inline'
+      document.getElementById('descriptionInput').style.display = 'none'
+      document.getElementById('editbtn').style.display = 'inline'
+      document.getElementById('commitbtn').style.display = 'none'
+      document.getElementById('editwarning').style.display = 'none'
+      editmode = false
+    }
+  }
+
+  /**
+    * Show next potential match and refill queue if necessary
+    */
   var next = function () {
     if (data.length === 0) {
       promise.then(showCurrent)
@@ -177,7 +207,16 @@ var main = (function () {
     * Send match as 'correct' to the app and show next potential match
     */
   var sendAndNext = function () {
+    leaveEditMode()
     send().then(showLast)
+    next()
+  }
+
+  /**
+    * Skip match and show next
+    */
+  var skipAndNext = function () {
+    leaveEditMode()
     next()
   }
 
@@ -219,11 +258,15 @@ var main = (function () {
 
     try {
       var nextbtn = document.getElementById('nextbtn')
-      nextbtn.onclick = next
+      nextbtn.onclick = skipAndNext
       var sndbtn = document.getElementById('savebtn')
       sndbtn.onclick = sendAndNext
       var rejectbtn = document.getElementById('rejectbtn')
       rejectbtn.onclick = rejectAndNext
+      var editbtn = document.getElementById('editbtn')
+      editbtn.onclick = startEditMode
+      var commitbtn = document.getElementById('commitbtn')
+      commitbtn.onclick = leaveEditMode
     } catch (e) {} // Buttons don't exist if user isn't logged in
 
     var langsel = document.getElementById('languageselector')

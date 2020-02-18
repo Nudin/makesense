@@ -86,6 +86,21 @@ body {
   }
 }
 
+#editwarning {
+	grid-column: 3/4;
+	grid-row: 4;
+	display: none;
+}
+
+.note {
+	margin: auto;
+	padding: 1em;
+	border: 1px solid #cccccc;
+	box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
+	transform: rotate(2deg);
+	background-image: linear-gradient(150deg, #d7c460 0%, #fefabc 100%);
+}
+
 #heading {
 	height: 38px;
 	margin-top: 38px;
@@ -146,8 +161,8 @@ body {
 	color: #3366cc;
 }
 
-#current .description {
-	padding-bottom: 28px;
+#current-description {
+	display: inline;
 }
 
 .message {
@@ -163,6 +178,15 @@ body {
 }
 #buttons button {
 	flex: 1 0 9em;
+}
+
+#descriptionInput, #commitbtn {
+	display: none;
+}
+#editbtn, #commitbtn {
+	background-color: white;
+	border: none;
+	font-size: x-large;
 }
 
 #rejectbtn, #nextbtn, #savebtn {
