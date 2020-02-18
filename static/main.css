@@ -26,6 +26,7 @@ body {
 .info-symbol-description {
 	display: none;
 	width: 23em;
+	max-width: 25vw;
 	margin-top: 53px;
 	padding-left: 10px;
 	padding-bottom: 1em;
@@ -77,6 +78,12 @@ body {
 	display: grid;
 	grid-template-columns: 2fr 3fr 2fr;
 	grid-template-rows: 53px auto auto auto auto auto;
+}
+
+@media only screen and (max-width: 1024px) {
+  .grid-container {
+	grid-template-columns: 2em 1fr 2em;
+  }
 }
 
 #heading {
@@ -150,6 +157,12 @@ body {
 
 #buttons {
 	margin-bottom: -24.5px; /* 8px to bottom of the div, +16.5px (roughly half of the button size)*/
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row;
+}
+#buttons button {
+	flex: 1 0 9em;
 }
 
 #rejectbtn, #nextbtn, #savebtn {
