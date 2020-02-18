@@ -25,11 +25,10 @@ body {
 
 .info-symbol-description {
 	display: none;
-	height: 5em;
-	width: 25em;
+	width: 23em;
 	margin-top: 53px;
 	padding-left: 10px;
-	padding-bottom: 8em;
+	padding-bottom: 1em;
 	position: absolute;
 	border: 1px solid grey;
 }
@@ -76,7 +75,7 @@ body {
 
 .grid-container {
 	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-columns: 2fr 3fr 2fr;
 	grid-template-rows: 53px auto auto auto auto auto;
 }
 
