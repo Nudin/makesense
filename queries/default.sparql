@@ -1,18 +1,27 @@
 SELECT * WHERE {
+# Search Lexemes
   ?lexeme wikibase:lemma ?lemma;
          dct:language ?lang;
          wikibase:lexicalCategory ?cat.
   OPTIONAL { ?lexeme wdt:P5185 ?genus. } .
+
+  # That are identical to a items label (incl. the language!), but not connected already
+  ?item rdfs:label ?lemma.
   FILTER NOT EXISTS {
     ?lexeme ontolex:sense ?sense.
     ?sense wdt:P5137 ?item.
   }.
+  # Exclude homographs (for now)
   FILTER NOT EXISTS { ?lexeme wdt:P5402 ?homograph }.
-  
-  ?item rdfs:label ?lemma.
+
+  # Not in English
+  FILTER( ?lang != wd:Q1860).
+
+  # Only Items with description in the language
   ?item schema:description ?desc.	FILTER(LANG(?desc) = LANG(?lemma)).
+
+  # Filter out properties and common false-positives
   FILTER NOT EXISTS { ?item a wikibase:Property}.
-  # Filter out common false-positives
   FILTER NOT EXISTS { ?item wdt:P131 ?_ }.
   FILTER NOT EXISTS {
     VALUES ?not { wd:Q4167410 wd:Q101352 wd:Q11424 wd:Q3305213 wd:Q482994 wd:Q13417114 wd:Q7366 wd:Q208569 wd:Q15632617 wd:Q21191270 wd:Q5185279 }.

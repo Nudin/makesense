@@ -1,0 +1,30 @@
+SELECT * WHERE {
+  ?lexeme wikibase:lemma ?lemma;
+         dct:language ?lang;
+         wikibase:lexicalCategory ?cat.
+  OPTIONAL { ?lexeme wdt:P5185 ?genus. } .
+  FILTER NOT EXISTS {
+    ?lexeme ontolex:sense ?sense.
+    ?sense wdt:P5137 ?item.
+  }.
+  FILTER NOT EXISTS { ?lexeme wdt:P5402 ?homograph }.
+
+  ?item rdfs:label ?lemma.
+  FILTER NOT EXISTS {
+   ?item schema:description ?realdesc.	FILTER(LANG(?realdesc) = LANG(?lemma)).
+  }
+
+  # ADD LANGUAGE FILTER HERE! (like FILTER(?lang != wd:Q150).)
+  # REPLACE_ME
+
+  ?item wdt:P31 ?type.
+  ?type rdfs:label ?desc. FILTER(LANG(?desc) = LANG(?lemma))
+
+  FILTER NOT EXISTS { ?item a wikibase:Property}.
+  # Filter out common false-positives
+  FILTER NOT EXISTS { ?item wdt:P131 ?_ }.
+  FILTER NOT EXISTS {
+    VALUES ?not { wd:Q4167410 wd:Q101352 wd:Q11424 wd:Q3305213 wd:Q482994 wd:Q13417114 wd:Q7366 wd:Q208569 wd:Q15632617 wd:Q21191270 wd:Q5185279 }.
+    ?item wdt:P31 ?not
+  }
+}
