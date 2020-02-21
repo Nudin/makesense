@@ -185,7 +185,6 @@ var main = (function () {
     * Send match as 'wrong' to the app and show next potential match
     */
   var rejectAndNext = function () {
-    leaveEditMode()
     var current = row
     next()
     return new Promise(function (resolve, reject) {
