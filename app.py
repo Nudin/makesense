@@ -23,16 +23,16 @@ import os
 import urllib
 
 import flask
-import LexData
-import mwoauth
 import requests
 import yaml
 from flask import request
 from flask.logging import create_logger
-from requests_oauthlib import OAuth1
 
+import LexData
+import mwoauth
 from dbconf import db_host, db_name, db_passwd, db_user
 from flask_mysqldb import MySQL
+from requests_oauthlib import OAuth1
 
 app = flask.Flask(__name__)
 
@@ -243,8 +243,9 @@ def statistics():
     )
     todo = cursor.fetchall()
     cursor.close()
+    username = flask.session.get("username", None)
     return flask.render_template(
-        "statistics.html", added=added, todo=todo, rejected=rejected
+        "statistics.html", added=added, todo=todo, rejected=rejected, username=username
     )
 
 
