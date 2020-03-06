@@ -224,6 +224,7 @@ var main = (function () {
     * Send match as 'wrong' to the app and show next potential match
     */
   var rejectAndNext = function () {
+    leaveEditMode()
     var current = row
     data = data.filter(function (match) {
       return (match[0] !== current[0] || match[1] !== current[1])
