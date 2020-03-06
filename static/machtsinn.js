@@ -279,6 +279,18 @@ var main = (function () {
     })
   }
 
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'n') {
+      document.getElementById('rejectbtn').click();
+    }
+    else if (event.key === 's') {
+      document.getElementById('nextbtn').click();
+    }
+    else if (event.key === 'm') {
+      document.getElementById('savebtn').click();
+    }
+  });
+
   return {
     init: init,
     get: function () {
