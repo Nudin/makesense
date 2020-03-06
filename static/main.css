@@ -86,11 +86,9 @@
 .description {
 	color: #3366cc;
 }
-
 #current-description {
 	display: inline;
 }
-
 #descriptionblock {
 	min-height: 3.5em;
 }

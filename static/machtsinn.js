@@ -26,6 +26,26 @@ var main = (function () {
   var cache = {}
   var editmode = false
 
+  class PotentialMatch {
+    constructor (row) {
+      this.lexeme = row[0]
+      this.qid = row[1]
+      this.lid = row[2]
+      this.lang = row[3]
+      this.gloss = row[4]
+      this.lexcat = row[5]
+      this.genus = row[6]
+    }
+
+    equal (other) {
+      return (this.lid === other.lid && this.qid === other.qid)
+    }
+
+    notEqual (other) {
+      return !this.equal(other)
+    }
+  }
+
   /**
     * Request a number of potential matches from the app's API and save them in
     * the queue
@@ -36,7 +56,9 @@ var main = (function () {
       xhttp.open('GET', './getcandidates?lang=' + lang, true)
       xhttp.onload = function () {
         if (xhttp.status === 200) {
-          queue = queue.concat(JSON.parse(xhttp.response))
+          var rows = JSON.parse(xhttp.response)
+          var newElements = rows.map(function (r) { return new PotentialMatch(r) })
+          queue = queue.concat(newElements)
           resolve()
         } else {
           reject(Error(xhttp.response))
@@ -92,21 +114,21 @@ var main = (function () {
   var show = function (state, match, labels) {
     var element = document.getElementById(state)
     element.style.display = 'block'
-    element.getElementsByClassName('lemma')[0].textContent = match[0]
-    element.getElementsByClassName('lexcat')[0].textContent = labels[0]
-    if (labels[1] !== null) {
-      element.getElementsByClassName('genus')[0].textContent = labels[1]
+    element.getElementsByClassName('lemma')[0].textContent = match.lexeme
+    element.getElementsByClassName('lexcat')[0].textContent = labels.lexcat
+    if (labels.genus) {
+      element.getElementsByClassName('genus')[0].textContent = labels.genus
       element.getElementsByClassName('joiner')[0].style.display = 'inline'
       element.getElementsByClassName('genus')[0].style.display = 'inline'
     } else {
       element.getElementsByClassName('genus')[0].style.display = 'none'
       element.getElementsByClassName('joiner')[0].style.display = 'none'
     }
-    element.getElementsByClassName('description')[0].textContent = match[4]
+    element.getElementsByClassName('description')[0].textContent = match.gloss
     element.getElementsByClassName('description')[0].href =
-      'https://www.wikidata.org/wiki/Q' + match[1]
+      'https://www.wikidata.org/wiki/Q' + match.qid
     element.getElementsByClassName('lemma')[0].href =
-      'https://www.wikidata.org/wiki/Lexeme:L' + match[2]
+      'https://www.wikidata.org/wiki/Lexeme:L' + match.lid
   }
 
   /**
@@ -115,7 +137,7 @@ var main = (function () {
   var showLast = function () {
     var element = document.getElementById('previous')
     element.getElementsByClassName('message')[0].textContent = 'Saved:'
-    const oldlabels = [cache[lastMatch[5]], cache[lastMatch[6]]]
+    const oldlabels = [cache[lastMatch.lexcat], cache[lastMatch.genus]]
     show('previous', lastMatch, oldlabels)
   }
 
@@ -130,16 +152,17 @@ var main = (function () {
       return
     }
     current = queue.pop()
-    const p1 = getLabelCached(current[5])
-    const p2 = getLabelCached(current[6])
-    Promise.all([p1, p2]).then(function (labels) {
+    const p1 = getLabelCached(current.lexcat)
+    const p2 = getLabelCached(current.genus)
+    Promise.all([p1, p2]).then(function (results) {
+      var labels = { lexcat: results[0], genus: results[1] }
       show('current', current, labels)
     })
   }
 
   var startEditMode = function () {
     if (!editmode) {
-      document.getElementById('descriptionInput').value = current[4]
+      document.getElementById('descriptionInput').value = current.gloss
       document.getElementById('current-description').style.display = 'none'
       document.getElementById('descriptionInput').style.display = 'inline'
       document.getElementById('editbtn').style.display = 'none'
@@ -151,9 +174,9 @@ var main = (function () {
 
   var leaveEditMode = function () {
     if (editmode) {
-      current[4] = document.getElementById('descriptionInput').value
+      current.gloss = document.getElementById('descriptionInput').value
       document.getElementById('current-description')
-        .getElementsByClassName('description')[0].textContent = current[4]
+        .getElementsByClassName('description')[0].textContent = current.gloss
       document.getElementById('current-description').style.display = 'inline'
       document.getElementById('descriptionInput').style.display = 'none'
       document.getElementById('editbtn').style.display = 'inline'
@@ -169,9 +192,7 @@ var main = (function () {
   var next = function () {
     // Due to the asynchronous queue refilling there might be copies of the old
     // match in the queue – therefore remove them
-    queue = queue.filter(function (match) {
-      return (match[0] !== current[0] || match[1] !== current[1])
-    })
+    queue = queue.filter(m => current.notEqual(m))
 
     if (queue.length === 0) {
       promise.then(showCurrent)
@@ -193,10 +214,10 @@ var main = (function () {
     var url = success ? './save' : './reject'
     var data = new FormData()
     var matchToSend = current
-    data.append('QID', matchToSend[1])
-    data.append('LID', matchToSend[2])
-    data.append('lang', matchToSend[3])
-    data.append('gloss', matchToSend[4])
+    data.append('QID', matchToSend.qid)
+    data.append('LID', matchToSend.lid)
+    data.append('lang', matchToSend.lang)
+    data.append('gloss', matchToSend.gloss)
     return new Promise(function (resolve, reject) {
       var xhttp = new XMLHttpRequest()
       xhttp.open('POST', url, true)
@@ -243,7 +264,7 @@ var main = (function () {
     */
   var init = function () {
     queue = []
-    cache = []
+    cache = {}
     var langsel = document.getElementById('languageselector')
     lang = langsel.value
     langcode = langsel.options[langsel.selectedIndex].innerHTML
