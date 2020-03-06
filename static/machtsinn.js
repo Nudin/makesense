@@ -284,6 +284,9 @@ var main = (function () {
   }
 
   document.addEventListener('keydown', function (event) {
+    if (editmode) {
+      return
+    }
     if (event.key === 'n') {
       document.getElementById('rejectbtn').click()
     } else if (event.key === 's') {
