@@ -17,10 +17,10 @@
   * with this program.  If not, see <http://www.gnu.org/licenses/>.
   */
 var main = (function () {
-  var data = []
+  var queue = []
   var promise = null
-  var row = null
-  var previous = null
+  var current = null
+  var lastMatch = null
   var lang = 1860
   var langcode = 'en'
   var cache = {}
@@ -36,7 +36,7 @@ var main = (function () {
       xhttp.open('GET', './getcandidates?lang=' + lang, true)
       xhttp.onload = function () {
         if (xhttp.status === 200) {
-          data = data.concat(JSON.parse(xhttp.response))
+          queue = queue.concat(JSON.parse(xhttp.response))
           resolve()
         } else {
           reject(Error(xhttp.response))
@@ -89,10 +89,10 @@ var main = (function () {
   /**
     * Display the given potential match
     */
-  var show = function (state, row, labels) {
+  var show = function (state, match, labels) {
     var element = document.getElementById(state)
     element.style.display = 'block'
-    element.getElementsByClassName('lemma')[0].textContent = row[0]
+    element.getElementsByClassName('lemma')[0].textContent = match[0]
     element.getElementsByClassName('lexcat')[0].textContent = labels[0]
     if (labels[1] !== null) {
       element.getElementsByClassName('genus')[0].textContent = labels[1]
@@ -102,11 +102,11 @@ var main = (function () {
       element.getElementsByClassName('genus')[0].style.display = 'none'
       element.getElementsByClassName('joiner')[0].style.display = 'none'
     }
-    element.getElementsByClassName('description')[0].textContent = row[4]
+    element.getElementsByClassName('description')[0].textContent = match[4]
     element.getElementsByClassName('description')[0].href =
-      'https://www.wikidata.org/wiki/Q' + row[1]
+      'https://www.wikidata.org/wiki/Q' + match[1]
     element.getElementsByClassName('lemma')[0].href =
-      'https://www.wikidata.org/wiki/Lexeme:L' + row[2]
+      'https://www.wikidata.org/wiki/Lexeme:L' + match[2]
   }
 
   /**
@@ -115,31 +115,31 @@ var main = (function () {
   var showLast = function () {
     var element = document.getElementById('previous')
     element.getElementsByClassName('message')[0].textContent = 'Saved:'
-    const oldlabels = [cache[previous[5]], cache[previous[6]]]
-    show('previous', previous, oldlabels)
+    const oldlabels = [cache[lastMatch[5]], cache[lastMatch[6]]]
+    show('previous', lastMatch, oldlabels)
   }
 
   /**
     * Display the uppermost potential match from the queue
     */
   var showCurrent = function () {
-    if (data.length === 0) {
+    if (queue.length === 0) {
       document.getElementById('message').textContent = 'No more potential matches for this language.'
       document.getElementById('message').style.display = 'block'
       document.getElementById('current').style.display = 'none'
       return
     }
-    row = data.pop()
-    const p1 = getLabelCached(row[5])
-    const p2 = getLabelCached(row[6])
+    current = queue.pop()
+    const p1 = getLabelCached(current[5])
+    const p2 = getLabelCached(current[6])
     Promise.all([p1, p2]).then(function (labels) {
-      show('current', row, labels)
+      show('current', current, labels)
     })
   }
 
   var startEditMode = function () {
     if (!editmode) {
-      document.getElementById('descriptionInput').value = row[4]
+      document.getElementById('descriptionInput').value = current[4]
       document.getElementById('current-description').style.display = 'none'
       document.getElementById('descriptionInput').style.display = 'inline'
       document.getElementById('editbtn').style.display = 'none'
@@ -151,9 +151,9 @@ var main = (function () {
 
   var leaveEditMode = function () {
     if (editmode) {
-      row[4] = document.getElementById('descriptionInput').value
+      current[4] = document.getElementById('descriptionInput').value
       document.getElementById('current-description')
-        .getElementsByClassName('description')[0].textContent = row[4]
+        .getElementsByClassName('description')[0].textContent = current[4]
       document.getElementById('current-description').style.display = 'inline'
       document.getElementById('descriptionInput').style.display = 'none'
       document.getElementById('editbtn').style.display = 'inline'
@@ -167,33 +167,42 @@ var main = (function () {
     * Show next potential match and refill queue if necessary
     */
   var next = function () {
-    if (data.length === 0) {
+    // Due to the asynchronous queue refilling there might be copies of the old
+    // match in the queue – therefore remove them
+    queue = queue.filter(function (match) {
+      return (match[0] !== current[0] || match[1] !== current[1])
+    })
+
+    if (queue.length === 0) {
       promise.then(showCurrent)
     } else {
       showCurrent()
     }
-    if (data.length < 4) {
+    if (queue.length < 4) {
       promise = load()
     }
   }
 
   /**
-    * Send the current match as correct match to the app, so that the app adds
-    * the match in Wikidata.
+    * Send the current match as correct or false match to the app.
+    *
+    * If success is true: the app adds the match to Wikidata
+    * If success is false: never show the (wrong) match again.
     */
-  var send = function () {
+  var send = function (success) {
+    var url = success ? './save' : './reject'
     var data = new FormData()
-    var current = row
-    data.append('QID', current[1])
-    data.append('LID', current[2])
-    data.append('lang', current[3])
-    data.append('gloss', current[4])
+    var matchToSend = current
+    data.append('QID', matchToSend[1])
+    data.append('LID', matchToSend[2])
+    data.append('lang', matchToSend[3])
+    data.append('gloss', matchToSend[4])
     return new Promise(function (resolve, reject) {
       var xhttp = new XMLHttpRequest()
-      xhttp.open('POST', './save', true)
+      xhttp.open('POST', url, true)
       xhttp.onload = function () {
         if (xhttp.status === 200) {
-          previous = current
+          if (success) { lastMatch = matchToSend }
           resolve()
         } else {
           reject(Error(xhttp.response))
@@ -208,7 +217,7 @@ var main = (function () {
     */
   var sendAndNext = function () {
     leaveEditMode()
-    send().then(showLast)
+    send(true).then(showLast)
     next()
   }
 
@@ -225,33 +234,15 @@ var main = (function () {
     */
   var rejectAndNext = function () {
     leaveEditMode()
-    var current = row
-    data = data.filter(function (match) {
-      return (match[0] !== current[0] || match[1] !== current[1])
-    })
+    send(false)
     next()
-    return new Promise(function (resolve, reject) {
-      var data = new FormData()
-      data.append('QID', current[1])
-      data.append('LID', current[2])
-      var xhttp = new XMLHttpRequest()
-      xhttp.open('POST', './reject', true)
-      xhttp.onload = function () {
-        if (xhttp.status === 200) {
-          resolve()
-        } else {
-          reject(Error(xhttp.response))
-        }
-      }
-      xhttp.send(data)
-    })
   }
 
   /**
     * Set up the game and initially fill the queue of potential matches
     */
   var init = function () {
-    data = []
+    queue = []
     cache = []
     var langsel = document.getElementById('languageselector')
     lang = langsel.value
@@ -299,7 +290,7 @@ var main = (function () {
   return {
     init: init,
     get: function () {
-      return data
+      return queue
     },
     show: showCurrent,
     buttonpressed: next,
