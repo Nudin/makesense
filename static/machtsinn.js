@@ -225,6 +225,9 @@ var main = (function () {
     */
   var rejectAndNext = function () {
     var current = row
+    data = data.filter(function (match) {
+      return (match[0] !== current[0] || match[1] !== current[1])
+    })
     next()
     return new Promise(function (resolve, reject) {
       var data = new FormData()
@@ -279,17 +282,15 @@ var main = (function () {
     })
   }
 
-  document.addEventListener('keydown', function(event) {
+  document.addEventListener('keydown', function (event) {
     if (event.key === 'n') {
-      document.getElementById('rejectbtn').click();
+      document.getElementById('rejectbtn').click()
+    } else if (event.key === 's') {
+      document.getElementById('nextbtn').click()
+    } else if (event.key === 'm') {
+      document.getElementById('savebtn').click()
     }
-    else if (event.key === 's') {
-      document.getElementById('nextbtn').click();
-    }
-    else if (event.key === 'm') {
-      document.getElementById('savebtn').click();
-    }
-  });
+  })
 
   return {
     init: init,
