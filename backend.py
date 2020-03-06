@@ -32,7 +32,7 @@ from dbconf import (
     db_user,
 )
 
-user_agent = "makesense 0.0.2 by User:MichaelSchoenitzer"
+user_agent = "makesense 0.1.0 by User:MichaelSchoenitzer"
 
 
 # Run a query against a web-api
