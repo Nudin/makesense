@@ -92,22 +92,37 @@ def get_tokens(tokentype, auth):
 
 @app.route("/")
 def index():
-    lang = int(request.args.get("lang", 1860))
     cursor = db.connection.cursor()
-    cursor.execute(
-        """SELECT languages.code, languages.lang
-        from matches join languages
-        on matches.lang = languages.lang
-        where status = %s or languages.lang = %s
-        GROUP BY languages.lang
-        ORDER BY languages.code;""",
-        (0, lang),
-    )
-    languages = cursor.fetchall()
+    lang_arg = request.args.get("lang")
+    if lang_arg is None:
+        lang_code = request.headers.get('Accept-Language', "en")[:2]
+        cursor.execute(
+            """SELECT languages.code, languages.lang
+            from matches join languages
+            on matches.lang = languages.lang
+            where status = %s or languages.code = %s
+            GROUP BY languages.lang
+            ORDER BY languages.code;""",
+            (0, lang_code),
+        )
+        languages = cursor.fetchall()
+        lang_id = [l[1] for l in languages if l[0]==lang_code][0]
+    else:
+        lang_id = int(lang_arg)
+        cursor.execute(
+            """SELECT languages.code, languages.lang
+            from matches join languages
+            on matches.lang = languages.lang
+            where status = %s or languages.lang = %s
+            GROUP BY languages.lang
+            ORDER BY languages.code;""",
+            (0, lang_id),
+        )
+        languages = cursor.fetchall()
     cursor.close()
     username = flask.session.get("username", None)
     return flask.render_template(
-        "index.html", username=username, languages=languages, currentlang=lang
+        "index.html", username=username, languages=languages, currentlang=lang_id
     )
 
 

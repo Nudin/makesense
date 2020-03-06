@@ -249,11 +249,16 @@ var main = (function () {
   var init = function () {
     data = []
     cache = []
-    var parameters = new URLSearchParams(window.location.search)
-    lang = parameters.get('lang') || 1860
-    load().then(function () {
-      showCurrent()
-    })
+    var langsel = document.getElementById('languageselector')
+    lang = langsel.value
+    langcode = langsel.options[langsel.selectedIndex].innerHTML
+
+    langsel.onchange = function () {
+      lang = langsel.value
+      langcode = langsel.options[langsel.selectedIndex].innerHTML
+      history.pushState(lang, '', window.location.pathname + '?lang=' + lang)
+      init()
+    }
 
     try {
       var nextbtn = document.getElementById('nextbtn')
@@ -268,14 +273,10 @@ var main = (function () {
       commitbtn.onclick = leaveEditMode
     } catch (e) {} // Buttons don't exist if user isn't logged in
 
-    var langsel = document.getElementById('languageselector')
-    langcode = langsel.options[langsel.selectedIndex].innerHTML
-    langsel.onchange = function () {
-      lang = langsel.value
-      langcode = langsel.options[langsel.selectedIndex].innerHTML
-      history.pushState(lang, '', window.location.pathname + '?lang=' + lang)
-      init()
-    }
+    // Load and display first matches
+    load().then(function () {
+      showCurrent()
+    })
   }
 
   return {
