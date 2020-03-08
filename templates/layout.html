@@ -2,7 +2,6 @@
 <head>
   <title>MachtSinn – Das macht doch alles keinen Sinn!</title>
   <link href="./static/common.css" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   {% block head %}
   {% endblock %}
 </head>
@@ -30,7 +29,7 @@
             <p>Very short phrase defining the meaning of a sense.</p>
         </div>
         {% block links %}{% endblock %}
-        <a href="https://github.com/Nudin/makesense" title="Code on Github"><p class="fa fa-github" style="font-size:22px"></p></a>
+        <a href="https://github.com/Nudin/makesense" title="Code on Github"><img class="github" src="static/GitHub-Mark-32px.png" alt="Code on Github"></a>
         {% if username %}
         <p id="greeting">Hello {{ username }}!</p>
         <div id="login"><a href="{{ url_for('logout') }}">Logout</a></div>
