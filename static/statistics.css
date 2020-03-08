@@ -1,3 +1,18 @@
+.grid-container {
+	display: grid;
+	grid-template-columns: 2fr 3fr 2fr;
+	grid-template-rows: 53px auto auto auto auto auto;
+}
+
+.info-symbol-description {
+	/* dirty hack, transparent is nicer but
+	 * overlaps with the text on the statistic page */
+	background: #eaecf0;
+}
+h1 {
+	height: 3em;
+}
+
 .stat {
 	margin: 0 2em;
 }
@@ -6,12 +21,4 @@ tr.total {
 }
 tbody tr td:last-child {
     text-align: right;
-}
-.info-symbol-description {
-	/* dirty hack, transparent is nicer but
-	 * overlaps with the text on the statistic page */
-	background: #eaecf0;
-}
-h1 {
-	height: 3em;
 }
