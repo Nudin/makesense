@@ -51,6 +51,8 @@
 	justify-self: stretch;
 	align-self: stretch;
 	display: none;
+	padding-left: 1em;
+	padding-right: 1em;
 }
 
 #message {
@@ -82,6 +84,14 @@
 	font-size: 1.5em;
 	font-weight: bold;
 }
+.prefix {
+	font-size: 1.5em;
+	color: #333;
+}
+.lexdata {
+	font-weight: normal;
+	color: #444;
+}
 
 .description {
 	color: #3366cc;
@@ -91,11 +101,9 @@
 }
 #descriptionblock {
 	min-height: 3.5em;
-}
-
-.lexdata {
-	font-weight: normal;
-	color: #444;
+	max-width: 30em;
+	margin-left: auto;
+	margin-right: auto
 }
 
 .message {

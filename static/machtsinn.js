@@ -109,11 +109,35 @@ var main = (function () {
   }
 
   /**
+    * Generate a prefix for the lexeme.
+    *
+    * This prefix depends on the conventions of the language, therefore only a few are defined here.
+    */
+  var getPrefix = function (match) {
+    if (langcode === 'en') {
+      if (match.lexcat === 24905) {
+        return 'to'
+      }
+    }
+    if (langcode === 'de') {
+      if (match.genus === 499327) {
+        return 'Der'
+      } else if (match.genus === 1775415) {
+        return 'Die'
+      } else if (match.genus === 1775461) {
+        return 'Das'
+      }
+    }
+    return ''
+  }
+
+  /**
     * Display the given potential match
     */
   var show = function (state, match, labels) {
     var element = document.getElementById(state)
     element.style.display = 'block'
+    element.getElementsByClassName('prefix')[0].textContent = getPrefix(match)
     element.getElementsByClassName('lemma')[0].textContent = match.lexeme
     element.getElementsByClassName('lexcat')[0].textContent = labels.lexcat
     if (labels.genus) {
@@ -137,7 +161,7 @@ var main = (function () {
   var showLast = function () {
     var element = document.getElementById('previous')
     element.getElementsByClassName('message')[0].textContent = 'Saved:'
-    const oldlabels = [cache[lastMatch.lexcat], cache[lastMatch.genus]]
+    const oldlabels = { lexcat: cache[lastMatch.lexcat], genus: cache[lastMatch.genus] }
     show('previous', lastMatch, oldlabels)
   }
 
