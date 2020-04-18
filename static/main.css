@@ -113,7 +113,7 @@
 
 /* Buttons */
 #buttons {
-	margin-bottom: -24.5px; /* 8px to bottom of the div, +16.5px (roughly half of the button size)*/
+	margin-bottom: 8px;
 	display: flex;
 	flex-wrap: wrap;
 	flex-direction: row;
