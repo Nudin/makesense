@@ -23,12 +23,12 @@ import os
 import urllib
 
 import flask
+import LexData
 import requests
 import yaml
 from flask import request
 from flask.logging import create_logger
 
-import LexData
 import mwoauth
 from dbconf import db_host, db_name, db_passwd, db_user
 from flask_mysqldb import MySQL
@@ -95,7 +95,7 @@ def index():
     cursor = db.connection.cursor()
     lang_arg = request.args.get("lang")
     if lang_arg is None:
-        lang_code = request.headers.get('Accept-Language', "en")[:2]
+        lang_code = request.headers.get("Accept-Language", "en")[:2]
         cursor.execute(
             """SELECT languages.code, languages.lang
             from matches join languages
@@ -106,7 +106,7 @@ def index():
             (0, lang_code),
         )
         languages = cursor.fetchall()
-        lang_id = [l[1] for l in languages if l[0]==lang_code][0]
+        lang_id = [l[1] for l in languages if l[0] == lang_code][0]
     else:
         lang_id = int(lang_arg)
         cursor.execute(
@@ -119,10 +119,15 @@ def index():
             (0, lang_id),
         )
         languages = cursor.fetchall()
+        lang_code = languages[lang_id]
     cursor.close()
     username = flask.session.get("username", None)
     return flask.render_template(
-        "index.html", username=username, languages=languages, currentlang=lang_id
+        "index.html",
+        username=username,
+        languages=languages,
+        currentlang=lang_id,
+        currentlangid=lang_code,
     )
 
 
@@ -177,8 +182,10 @@ def save():
     lid = "L" + request.form.get("LID")
     qid = "Q" + request.form.get("QID")
     lang = "Q" + request.form.get("lang")
-    gloss = request.form.get("gloss")
-    log.info("%s %s %s %s", lid, qid, lang, gloss)
+    glosses = {
+        key[6:]: gloss for key, gloss in request.form.items() if key[:6] == "gloss-"
+    }
+    log.info("%s %s %s %s", lid, qid, lang, glosses)
 
     # Get token and auth
     access_token = flask.session["access_token"]
@@ -198,9 +205,9 @@ def save():
         claims = sense.claims().get("P5137")
         if claims and claims[0].pure_value == qid:
             return "Sense already existing", 409
+    # TODO: check if this can be removed
     if lang not in languages:
         return "Error. Language not supported yet!", 409
-    glosses = {languages[lang]: gloss}
     claims = {"P5137": [qid]}
     try:
         _ = L.createSense(glosses, claims)

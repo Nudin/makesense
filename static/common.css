@@ -92,19 +92,3 @@ body {
 	position: absolute;
 	text-align: center;
 }
-
-#languagesetting {
-	display: inline-block;
-	position: absolute;
-	float: right;
-	right: 12px;
-}
-
-#languageselector {
-	text-align: center;
-	font-size: 20px;
-	padding: 5.75px 5.5px;
-	margin: 6.75px 7.5px;
-	border: 1px solid grey;
-	border-radius: 5px;
-}

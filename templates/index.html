@@ -13,20 +13,31 @@
 
     <div id="message"></div>
     <div id="current">
-        <div class="lexeme">
-            <span class="prefix"></span>
-            <span><a class="lemma"></a></span>
-            <span class="lexdata">
-                (<span class="lexcat"></span><span class="joiner">,
-                </span><span class="genus"></span>)
+        <div id="lexeme" class="lexeme">
+            <span id="prefix" class="prefix"></span>
+            <span><a id="lemma" class="lemma"></a></span>
+            <span id="lexdata" class="lexdata">
+                (<span id="lexcat" class="lexcat"></span><span id="joiner" class="joiner">,
+                </span><span id="genus" class="genus"></span>)
             </span>
         </div>
         <p>Is</p>
-        <div id="descriptionblock">
-            <div id="current-description">“<a class="description"></a>”</div>
-            <input type="text" id="descriptionInput" size="40">
-            <button id="editbtn">&#9997;</button>
-            <button id="commitbtn">&check;</button>
+        <div id="descriptions">
+            <div id="description-block-{{currentlangid}}" class="descriptionblock">
+                <div class="description-line">“<a class="description"></a>”</div>
+                <input type="text" class="descriptionInput" size="40">
+                <button class="editbtn">&#9997;</button>
+                <button class="commitbtn">&check;</button>
+            </div>
+            <template id="further-descriptions" class="descriptionblock">
+             <div id="description-block-lang" class="additionaldesc">
+                <span class="langcode"></span>:&nbsp;<!--
+             --><div class="description-line">“<a class="description"></a>”</div>
+                <input type="text" class="descriptionInput" size="40">
+                <button class="editbtn">&#9997;</button>
+                <button class="commitbtn">&check;</button>
+            </div>
+            </template>
         </div>
         <p>a common meaning (sense) for the given Word?</p>
         {% if username %}
@@ -48,16 +59,16 @@
     </div>
 
     <div id="previous">
-        <div class="message">Last Saved</div>
-        <div id="previous-lemma-description">
-            <div>“<a class="description"></a>”</div>
+        <div class="message" id="previous-message">Last Saved</div>
+        <div id="previous-match">
+            <div id="prev-description-line">“<a id="description" class="description"></a>”</div>
             <p>is a common meaning for</p>
-            <div class="lexeme">
-                <span class="prefix"></span>
-                <span><a class="lemma"></a></span>
-                <span class="lexdata">
-                    (<span class="lexcat"></span><span class="joiner">,
-                    </span><span class="genus"></span>)
+            <div id="lexeme" class="lexeme">
+                <span id="prefix" class="prefix"></span>
+                <span><a id="lemma" class="lemma"></a></span>
+                <span id="lexdata" class="lexdata">
+                    (<span id="lexcat" class="lexcat"></span><span id="joiner" class="joiner">,
+                    </span><span id="genus" class="genus"></span>)
                 </span>
             </div>
         </div>
@@ -72,6 +83,9 @@
                     <option value="{{lang[1]}}" {{'selected' if currentlang == lang[1]}}>{{lang[0]}}</option>
                     {% endfor %}
                 </select>
+                <span id="addLang">
+                    💬
+                </span>
             </div>
         </div>
     </div>

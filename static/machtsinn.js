@@ -25,6 +25,7 @@ var main = (function () {
   var langcode = 'en'
   var cache = {}
   var editmode = false
+  var glossLanguages = []
 
   class PotentialMatch {
     constructor (row) {
@@ -32,7 +33,8 @@ var main = (function () {
       this.qid = row[1]
       this.lid = row[2]
       this.lang = row[3]
-      this.gloss = row[4]
+      this.gloss = {}
+      this.gloss[langcode] = row[4]
       this.lexcat = row[5]
       this.genus = row[6]
     }
@@ -93,6 +95,34 @@ var main = (function () {
   }
 
   /**
+    * Get the description of an item via Wikidata's API
+    *
+    * qid: qid without 'Q'
+    * langcode: Wikimedia langcode ('en', 'de'…)
+    */
+  function getDescription (qid, langcode) {
+    qid = 'Q' + qid
+    return new Promise(function (resolve, reject) {
+      var xhttp = new XMLHttpRequest()
+      xhttp.onreadystatechange = function () {
+        if (this.readyState === 4 && this.status === 200) {
+          const res = JSON.parse(this.responseText)
+          if (langcode in res.entities[qid].descriptions) {
+            resolve(res.entities[qid].descriptions[langcode].value)
+          } else {
+            reject(new Error('No description'))
+          }
+        }
+      }
+      xhttp.open('GET', 'https://www.wikidata.org/w/api.php?' +
+                        'origin=*&action=wbgetentities&format=json' +
+                        '&ids=' + qid + '&props=descriptions&languages=' + langcode, true)
+      xhttp.setRequestHeader('Content-type', 'application/json')
+      xhttp.send()
+    })
+  }
+
+  /**
     * Wrapper around getLabel with a cache to avoid unnecessary requests
     */
   async function getLabelCached (qid) {
@@ -106,6 +136,15 @@ var main = (function () {
       cache[qid] = value
       return value
     }
+  }
+
+  function getAdditionalGlosses (currentMatch) {
+    return glossLanguages.map(function (alang) {
+      if (alang === langcode) { return new Promise(resolve => resolve()) }
+      return getDescription(currentMatch.qid, alang).then(function (value) {
+        currentMatch.gloss[alang] = value
+      }, function (error) { /* No description available, ignore this language */ })
+    })
   }
 
   /**
@@ -135,32 +174,54 @@ var main = (function () {
     * Display the given potential match
     */
   var show = function (state, match, labels) {
-    var element = document.getElementById(state)
-    element.style.display = 'block'
-    element.getElementsByClassName('prefix')[0].textContent = getPrefix(match)
-    element.getElementsByClassName('lemma')[0].textContent = match.lexeme
-    element.getElementsByClassName('lexcat')[0].textContent = labels.lexcat
+    var block = document.getElementById(state)
+    block.style.display = 'block'
+    block.querySelector('.prefix').textContent = getPrefix(match)
+    block.querySelector('.lemma').textContent = match.lexeme
+    block.querySelector('.lexcat').textContent = labels.lexcat
     if (labels.genus) {
-      element.getElementsByClassName('genus')[0].textContent = labels.genus
-      element.getElementsByClassName('joiner')[0].style.display = 'inline'
-      element.getElementsByClassName('genus')[0].style.display = 'inline'
+      block.querySelector('.genus').textContent = labels.genus
+      block.querySelector('.joiner').style.display = 'inline'
+      block.querySelector('.genus').style.display = 'inline'
     } else {
-      element.getElementsByClassName('genus')[0].style.display = 'none'
-      element.getElementsByClassName('joiner')[0].style.display = 'none'
+      block.querySelector('.genus').style.display = 'none'
+      block.querySelector('.joiner').style.display = 'none'
     }
-    element.getElementsByClassName('description')[0].textContent = match.gloss
-    element.getElementsByClassName('description')[0].href =
-      'https://www.wikidata.org/wiki/Q' + match.qid
-    element.getElementsByClassName('lemma')[0].href =
+    block.querySelector('.lemma').href =
       'https://www.wikidata.org/wiki/Lexeme:L' + match.lid
+    if (state === 'current') {
+      glossLanguages.forEach(function (alang) {
+        var desc = block.querySelector('#description-block-' + alang)
+        if (alang in match.gloss) {
+          desc.style.display = 'block'
+          desc.querySelector('.description').textContent = match.gloss[alang]
+          desc.querySelector('.description').href =
+    'https://www.wikidata.org/wiki/Q' + match.qid
+        } else {
+          desc.style.display = 'none'
+        }
+      })
+    } else {
+      block.querySelector('.description').textContent = match.gloss[langcode]
+      block.querySelector('.description').href =
+    'https://www.wikidata.org/wiki/Q' + match.qid
+    }
+  }
+
+  var addNewGlossLang = function (newlang) {
+    const template = document.querySelector('#further-descriptions')
+    const newElement = document.importNode(template.content, true)
+    newElement.firstElementChild.style.display = 'none'
+    newElement.firstElementChild.id = 'description-block-' + newlang
+    newElement.querySelector('.langcode').textContent = newlang
+    document.getElementById('descriptions').append(newElement)
   }
 
   /**
     * Show the last successfully saved match
     */
   var showLast = function () {
-    var element = document.getElementById('previous')
-    element.getElementsByClassName('message')[0].textContent = 'Saved:'
+    document.getElementById('previous-message').textContent = 'Saved:'
     const oldlabels = { lexcat: cache[lastMatch.lexcat], genus: cache[lastMatch.genus] }
     show('previous', lastMatch, oldlabels)
   }
@@ -178,33 +239,37 @@ var main = (function () {
     current = queue.pop()
     const p1 = getLabelCached(current.lexcat)
     const p2 = getLabelCached(current.genus)
-    Promise.all([p1, p2]).then(function (results) {
+    const p3 = getAdditionalGlosses(current)
+    Promise.all([p1, p2].concat(p3)).then(function (results) {
       var labels = { lexcat: results[0], genus: results[1] }
       show('current', current, labels)
     })
   }
 
-  var startEditMode = function () {
+  var startEditMode = function (click) {
     if (!editmode) {
-      document.getElementById('descriptionInput').value = current.gloss
-      document.getElementById('current-description').style.display = 'none'
-      document.getElementById('descriptionInput').style.display = 'inline'
-      document.getElementById('editbtn').style.display = 'none'
-      document.getElementById('commitbtn').style.display = 'inline'
+      var block = click.srcElement.parentElement
+      var desclang = block.id.slice('description-block-'.length)
+      block.querySelector('.descriptionInput').value = current.gloss[desclang]
+      block.querySelector('.description-line').style.display = 'none'
+      block.querySelector('.descriptionInput').style.display = 'inline'
+      block.querySelector('.editbtn').style.display = 'none'
+      block.querySelector('.commitbtn').style.display = 'inline'
       document.getElementById('editwarning').style.display = 'block'
       editmode = true
     }
   }
 
-  var leaveEditMode = function () {
+  var leaveEditMode = function (click) {
     if (editmode) {
-      current.gloss = document.getElementById('descriptionInput').value
-      document.getElementById('current-description')
-        .getElementsByClassName('description')[0].textContent = current.gloss
-      document.getElementById('current-description').style.display = 'inline'
-      document.getElementById('descriptionInput').style.display = 'none'
-      document.getElementById('editbtn').style.display = 'inline'
-      document.getElementById('commitbtn').style.display = 'none'
+      var block = click.srcElement.parentElement
+      var desclang = block.id.slice('description-block-'.length)
+      current.gloss[desclang] = block.querySelector('.descriptionInput').value
+      block.querySelector('.description').textContent = current.gloss[desclang]
+      block.querySelector('.description-line').style.display = 'inline'
+      block.querySelector('.descriptionInput').style.display = 'none'
+      block.querySelector('.editbtn').style.display = 'inline'
+      block.querySelector('.commitbtn').style.display = 'none'
       document.getElementById('editwarning').style.display = 'none'
       editmode = false
     }
@@ -241,7 +306,11 @@ var main = (function () {
     data.append('QID', matchToSend.qid)
     data.append('LID', matchToSend.lid)
     data.append('lang', matchToSend.lang)
-    data.append('gloss', matchToSend.gloss)
+    glossLanguages.forEach(function (lang) {
+      if (lang in matchToSend.gloss) {
+        data.append('gloss-' + lang, matchToSend.gloss[lang])
+      }
+    })
     return new Promise(function (resolve, reject) {
       var xhttp = new XMLHttpRequest()
       xhttp.open('POST', url, true)
@@ -283,6 +352,22 @@ var main = (function () {
     next()
   }
 
+  var updateLangList = function () {
+    const oldLangStr = glossLanguages.join(',')
+    const newLangStr = window.prompt('List of language in those you want to add the glosses. Comma separated language codes (Example: "de,en,fr")', oldLangStr)
+    if (newLangStr === '') { window.alert('List cannot be empty'); return }
+    const newList = newLangStr.split(/ ?, ?/)
+    if (newList.sort().join() === glossLanguages.sort().join()) { return }
+    document.querySelectorAll('.additionaldesc').forEach(x => x.remove())
+    newList.forEach(function (newLang) {
+      if (newLang !== langcode) {
+        addNewGlossLang(newLang)
+      }
+    })
+    glossLanguages = newList
+    init()
+  }
+
   /**
     * Set up the game and initially fill the queue of potential matches
     */
@@ -292,14 +377,19 @@ var main = (function () {
     var langsel = document.getElementById('languageselector')
     lang = langsel.value
     langcode = langsel.options[langsel.selectedIndex].innerHTML
+    if (glossLanguages.length === 0) {
+      glossLanguages = [langcode]
+    }
 
     langsel.onchange = function () {
       lang = langsel.value
       langcode = langsel.options[langsel.selectedIndex].innerHTML
       history.pushState(lang, '', window.location.pathname + '?lang=' + lang)
+      glossLanguages = []
       init()
     }
 
+    document.getElementById('addLang').onclick = updateLangList
     try {
       var nextbtn = document.getElementById('nextbtn')
       nextbtn.onclick = skipAndNext
@@ -307,11 +397,13 @@ var main = (function () {
       sndbtn.onclick = sendAndNext
       var rejectbtn = document.getElementById('rejectbtn')
       rejectbtn.onclick = rejectAndNext
-      var editbtn = document.getElementById('editbtn')
-      editbtn.onclick = startEditMode
-      var commitbtn = document.getElementById('commitbtn')
-      commitbtn.onclick = leaveEditMode
     } catch (e) {} // Buttons don't exist if user isn't logged in
+    document.querySelectorAll('.editbtn').forEach(function (editbtn) {
+      editbtn.onclick = startEditMode
+    })
+    document.querySelectorAll('.commitbtn').forEach(function (commitbtn) {
+      commitbtn.onclick = leaveEditMode
+    })
 
     // Load and display first matches
     load().then(function () {
