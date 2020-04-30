@@ -119,7 +119,7 @@ def index():
             (0, lang_id),
         )
         languages = cursor.fetchall()
-        lang_code = languages[lang_id]
+        lang_code = [l[0] for l in languages if l[1] == lang_id][0]
     cursor.close()
     username = flask.session.get("username", None)
     return flask.render_template(
