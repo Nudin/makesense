@@ -204,6 +204,18 @@ def save():
     for sense in L.senses:
         claims = sense.claims().get("P5137")
         if claims and claims[0].pure_value == qid:
+            cursor = db.connection.cursor()
+            cursor.execute(
+                """
+                UPDATE
+                matches
+                SET status = 2
+                WHERE QID = %s and LID = %s
+                """,
+                (qid[1:], lid[1:]),
+            )
+            cursor.close()
+            db.connection.commit()
             return "Sense already existing", 409
     # TODO: check if this can be removed
     if lang not in languages:
@@ -213,7 +225,7 @@ def save():
         _ = L.createSense(glosses, claims)
     except PermissionError as error:
         log.exception(error)
-        return "Your not permitted to do this action!", 403
+        return "You are not permitted to do this action!", 403
 
     # Update DB status
     cursor = db.connection.cursor()
