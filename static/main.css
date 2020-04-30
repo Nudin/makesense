@@ -105,6 +105,10 @@
 	margin-left: auto;
 	margin-right: auto
 }
+.langcode {
+	color: #555;
+	font-weight: bold;
+}
 
 .message {
 	font-weight: bold;
