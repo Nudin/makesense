@@ -292,7 +292,7 @@ def login():
     """
     try:
         redirect, request_token = mwoauth.initiate(
-            app.config["OAUTH_MWURI"], consumer_token
+            app.config["OAUTH_MWURI"], consumer_token, callback="https://machtsinn.toolforge.org/oauth-callback"
         )
     except Exception:
         log.exception("mwoauth.initiate failed")
