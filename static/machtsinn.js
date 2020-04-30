@@ -382,9 +382,12 @@ var main = (function () {
     }
 
     langsel.onchange = function () {
+      var oldlangcode = langcode
       lang = langsel.value
       langcode = langsel.options[langsel.selectedIndex].innerHTML
       history.pushState(lang, '', window.location.pathname + '?lang=' + lang)
+      document.getElementById('description-block-' + oldlangcode).id = 'description-block-' + langcode
+      document.querySelectorAll('.additionaldesc').forEach(x => x.remove())
       glossLanguages = []
       init()
     }
