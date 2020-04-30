@@ -202,8 +202,8 @@ def save():
     # Edit – if possible
     L = LexData.Lexeme(repo, lid)
     for sense in L.senses:
-        claims = sense.claims().get("P5137")
-        if claims and claims[0].pure_value == qid:
+        claims = sense.claims.get("P5137")
+        if claims and claims[0].value["id"] == qid:
             cursor = db.connection.cursor()
             cursor.execute(
                 """
