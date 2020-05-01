@@ -167,6 +167,13 @@ var main = (function () {
         return 'Das'
       }
     }
+    if (langcode === 'fr') {
+      if (match.genus === 499327) {
+        return 'un'
+      } else if (match.genus === 1775415) {
+        return 'une'
+      }
+    }
     return ''
   }
 
