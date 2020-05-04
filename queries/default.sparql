@@ -24,7 +24,13 @@ SELECT * WHERE {
   FILTER NOT EXISTS { ?item a wikibase:Property}.
   FILTER NOT EXISTS { ?item wdt:P131 ?_ }.
   FILTER NOT EXISTS {
-    VALUES ?not { wd:Q4167410 wd:Q101352 wd:Q11424 wd:Q3305213 wd:Q482994 wd:Q13417114 wd:Q7366 wd:Q208569 wd:Q15632617 wd:Q21191270 wd:Q5185279 }.
+    VALUES ?not { wd:Q4167410 wd:Q101352 wd:Q11424 wd:Q3305213 wd:Q482994 wd:Q13417114 wd:Q7366 wd:Q208569 wd:Q15632617 wd:Q21191270 wd:Q5185279 
+                # software
+                Q7397
+                # motif
+                Q1229071
+                # gene
+                Q7187}.
     ?item wdt:P31 ?not
   }
 }
