@@ -30,7 +30,11 @@ SELECT * WHERE {
                 # motif
                 Q1229071
                 # gene
-                Q7187}.
+                Q7187
+                # wikibase datatype
+                Q19798645
+                # symbol (heraldic)
+                Q56876983}.
     ?item wdt:P31 ?not
   }
 }
