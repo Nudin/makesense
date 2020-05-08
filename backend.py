@@ -216,8 +216,9 @@ db = MachtSinnDB()
 print("Running queries…")
 
 queries = [
-    #    "queries/default.sparql",
-    #    "queries/en.sparql",
+    "queries/default.sparql",
+    "queries/en.sparql",
+    "queries/de.sparql",
     "queries/withoutdescriptions.sparql",
 ]
 for filename in queries:

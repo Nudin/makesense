@@ -1,0 +1,74 @@
+SELECT ?lexeme ?item ?lemma ?desc ?cat ?genus (wd:Q188 as ?lang) WITH {
+  SELECT *
+  WHERE {
+    ?lexeme wikibase:lemma ?lemma;
+         dct:language wd:Q188;
+         wikibase:lexicalCategory ?cat.
+    OPTIONAL { ?lexeme wdt:P5185 ?genus. } .
+    FILTER NOT EXISTS {
+    ?lexeme ontolex:sense ?sense.
+    ?sense wdt:P5137 ?item.
+  }.
+  FILTER NOT EXISTS { ?item a wikibase:Property}.
+  FILTER NOT EXISTS { ?lexeme wdt:P5402 ?homograph }.
+  ?item rdfs:label ?lemma.
+  ?item schema:description ?desc.
+  FILTER(LANG(?desc) = "de").
+  }} AS %i
+WHERE {
+  include %i
+  # Filter out common false-positives
+  FILTER NOT EXISTS { ?item wdt:P131 ?_ }.
+  FILTER NOT EXISTS {
+    VALUES ?not {
+    wd:Q101352   # family name
+    wd:Q11424    # Movie
+    wd:Q11446    # ships
+    wd:Q11668273 # shogi pieces
+    wd:Q1229071  # motif
+    wd:Q13417114 # noble family
+    wd:Q1391494  # technical terminology
+    wd:Q147276   # names of any kind
+    wd:Q15632617 # fictive person
+    wd:Q15642541 # human settlement definions
+    wd:Q17155032 # type of software
+    wd:Q1725664  # terminology of any kind
+    wd:Q17537576 # any creative work incl. music, video, text, etc.
+    wd:Q17638537 # routine - fix computer terminology
+    wd:Q19798644 # wikibase model terms
+    wd:Q19798645 # wikibase datatype
+    wd:Q20202269 # music terms
+    wd:Q208569   # album
+    wd:Q21191270 # tv series episode
+    wd:Q215380   # bands
+    wd:Q2235308  # types of ships
+    wd:Q23786    # eye color
+    wd:Q3305213  # painting
+    wd:Q3491429  # military terms
+    wd:Q395      # math
+    wd:Q40056    # software
+    wd:Q4167410  # disambiguation page
+    wd:Q4167836  # wikimedia cat
+    wd:Q43229    # organization of any kind
+    wd:Q482994   # album
+    wd:Q494452   # heraldry
+    wd:Q5        # human
+    wd:Q5185279  # poem
+    wd:Q56876983 # symbol (heraldic)
+    wd:Q57814795 # domesticated animal
+    wd:Q7187     # gene
+    wd:Q7366     # song
+    wd:Q7397     # software
+    wd:Q8134     # economics
+    wd:Q191067   # article
+  }.
+    ?item wdt:P31/(wdt:P279*) ?not  }.
+  # filter on properties:
+  FILTER NOT EXISTS {
+    VALUES ?not2 {
+      wdt:P688 # gene stuff
+      wdt:P195 # collection (of art)
+      wdt:P1482 # stack exchange
+      }
+      ?item ?not2 ?_ }.
+}

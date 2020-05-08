@@ -13,7 +13,7 @@ SELECT ?lexeme ?item ?lemma ?desc ?cat ?genus (wd:Q1860 as ?lang) WITH {
   FILTER NOT EXISTS { ?lexeme wdt:P5402 ?homograph }.
   ?item rdfs:label ?lemma.
   ?item schema:description ?desc.
-  FILTER(LANG(?desc) = LANG(?lemma)).
+  FILTER(LANG(?desc) = "en").
   }} AS %i
 WHERE {
   include %i
