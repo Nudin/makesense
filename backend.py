@@ -54,7 +54,7 @@ class MachtSinnDB:
 
     # This variable should be incremented every time the query is changed
     # and the database should be pruned from data that is not in the query anymore
-    dataversion = 3
+    dataversion = 4
 
     def __init__(self):
         # Open SQL-Connection
