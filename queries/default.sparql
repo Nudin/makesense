@@ -1,3 +1,4 @@
+SELECT ?lexeme ?item ?lemma ?desc ?cat ?genus ?lang WITH {
 SELECT * WHERE {
   # The order of these joins is manually optimized
   hint:Query hint:optimizer "None".
@@ -9,14 +10,19 @@ SELECT * WHERE {
   # Search for potentially matching items with descriptions
   ?item rdfs:label ?lemma.
   ?item schema:description ?desc.	FILTER(LANG(?desc) = LANG(?lemma)).
+  # get lexical category and genus
+  ?lexeme         wikibase:lexicalCategory ?cat.
+  OPTIONAL { ?lexeme wdt:P5185 ?genus. } .
 
   # Remove matches that are already connected
   FILTER NOT EXISTS {
     ?lexeme ontolex:sense ?sense.
     ?sense wdt:P5137 ?item.
   }.
-
-  # Remove various common false positives
+}} AS %i
+WHERE {
+  include %i
+  # Remove various comman false postives
   FILTER NOT EXISTS {
     VALUES ?not {
      wd:Q101352   # family name
@@ -64,8 +70,4 @@ SELECT * WHERE {
   FILTER NOT EXISTS { ?item a wikibase:Property}.     # filter properties
   FILTER NOT EXISTS { ?item wdt:P131 ?_ }.            # filter geographic items
   FILTER NOT EXISTS { ?lexeme wdt:P5402 ?_ }.         # filter homographs
-
-  # get lexical category and genus
-  ?lexeme         wikibase:lexicalCategory ?cat.
-  OPTIONAL { ?lexeme wdt:P5185 ?genus. } .
 }
