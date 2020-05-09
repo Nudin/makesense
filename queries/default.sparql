@@ -61,6 +61,7 @@ WHERE {
      wd:Q5        # human
      wd:Q5185279  # poem
      wd:Q56876983 # symbol (heraldic)
+     wd:Q56877494 # quadruped heraldic
      wd:Q57814795 # domesticated animal
      wd:Q7187     # gene
      wd:Q7366     # song
