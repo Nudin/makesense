@@ -50,19 +50,14 @@ WHERE {
      wd:Q23786    # eye color
      wd:Q3305213  # painting
      wd:Q3491429  # military terms
-     wd:Q3683633  # color (heraldic)
-     wd:Q3744866  # common charge (heraldic)
      wd:Q395      # math
      wd:Q40056    # software
      wd:Q4167410  # disambiguation page
      wd:Q4167836  # wikimedia cat
      wd:Q43229    # organization of any kind
      wd:Q482994   # album
-     wd:Q494452   # heraldry
      wd:Q5        # human
      wd:Q5185279  # poem
-     wd:Q56876983 # symbol (heraldic)
-     wd:Q56877494 # quadruped heraldic
      wd:Q57814795 # domesticated animal
      wd:Q7187     # gene
      wd:Q7366     # song
@@ -70,6 +65,14 @@ WHERE {
      wd:Q8134     # economics
     }.
     ?item wdt:P31 ?not
+  }
+  # Remove various comman false postives that are any subclass of
+  FILTER NOT EXISTS {
+    VALUES ?not2 {
+     wd:Q735      # art (incl. heraldics)
+    }.
+    # This is more expensive than the P31 filter above and might time out
+    ?item wdt:P31/wdt:P279* ?not2
   }
   FILTER NOT EXISTS { ?item a wikibase:Property}.     # filter properties
   FILTER NOT EXISTS { ?item wdt:P131 ?_ }.            # filter geographic items
