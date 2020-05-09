@@ -35,6 +35,7 @@ WHERE {
      wd:Q147276   # names of any kind
      wd:Q15632617 # fictive person
      wd:Q15642541 # human settlement definions
+     wd:Q170173   # yacht
      wd:Q17155032 # type of software
      wd:Q1725664  # terminology of any kind
      wd:Q17537576 # any creative work incl. music, video, text, etc.
