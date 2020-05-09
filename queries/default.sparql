@@ -51,6 +51,7 @@ WHERE {
      wd:Q3305213  # painting
      wd:Q3491429  # military terms
      wd:Q3683633  # color (heraldic)
+     wd:Q3744866  # common charge (heraldic)
      wd:Q395      # math
      wd:Q40056    # software
      wd:Q4167410  # disambiguation page
