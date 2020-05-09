@@ -54,7 +54,7 @@ class MachtSinnDB:
 
     # This variable should be incremented every time the query is changed
     # and the database should be pruned from data that is not in the query anymore
-    dataversion = 4
+    dataversion = 5
 
     def __init__(self):
         # Open SQL-Connection
@@ -226,19 +226,25 @@ for filename in queries:
         sparql_query = f.read()
 
     if "# REPLACE_ME" in sparql_query:
-        lang_filter = ""
+        lang_filter = "FILTER("
+        first = True
         for lang in db.get_common_languages():
-            print("Create filter for", lang[0])
-            lang_filter += "FILTER(?lang != wd:Q{}).".format(lang[0])
-        sparql_query.replace("# REPLACE_ME", lang_filter)
-        print(lang_filter)
+            if not first:
+                lang_filter += " && "
+            lang_filter += "?lang != wd:Q{}".format(lang[0])
+            first = False
+        lang_filter += ")."
+        sparql_query = sparql_query.replace("# REPLACE_ME", lang_filter)
+        print("Language Filter:", lang_filter)
 
     print("Running query", filename)
     res = runSPARQLquery(sparql_query)
     print("Collect results…")
     num_matches = len(res)
     matches = [Match(row) for row in res]
-    print("Adding {} rows to Database…".format(3 * num_matches))
+    print(
+        "Adding {} matches ({} rows) to Database…".format(num_matches, 3 * num_matches)
+    )
     db.add_matches(map(Match.get_match_values, matches))
     db.add_texts(map(Match.get_text_values, matches))
     db.add_lexeminfo(map(Match.get_lexeme_values, matches))
@@ -255,5 +261,6 @@ db.add_languages(langlist)
 db.commit()
 
 # Delete old entries #
+print("Pruning old matches")
 db.prune_old()
 db.commit()
