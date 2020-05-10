@@ -3,7 +3,7 @@ SELECT * WHERE {
   # The order of these joins is manually optimized
   hint:Query hint:optimizer "None".
 
-  # Search for lexemes in any language except Englisch and German
+  # Search for lexemes in any language except English and German
   # (they have their own query)
   ?lexeme  dct:language ?lang.  FILTER( ?lang != wd:Q1860 && ?lang != wd:Q188).
   ?lexeme wikibase:lemma ?lemma.
@@ -22,19 +22,19 @@ SELECT * WHERE {
 }} AS %i
 WHERE {
   include %i
-  # Remove various comman false postives
+  # Remove various common false positives
   FILTER NOT EXISTS {
     VALUES ?not {
      wd:Q101352   # family name
-     wd:Q11424    # Movie
+     wd:Q11424    # movie
      wd:Q11446    # ships
      wd:Q11668273 # shogi pieces
      wd:Q1229071  # motif
      wd:Q13417114 # noble family
      wd:Q1391494  # technical terminology
      wd:Q147276   # names of any kind
-     wd:Q15632617 # fictive person
-     wd:Q15642541 # human settlement definions
+     wd:Q15632617 # fictional person
+     wd:Q15642541 # human settlement definitions
      wd:Q17155032 # type of software
      wd:Q1725664  # terminology of any kind
      wd:Q17537576 # any creative work incl. music, video, text, etc.
