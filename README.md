@@ -11,7 +11,7 @@ Wikidata Query that matches the lemma for the lexeme with items with same label
 (in the same language) and adds them and the descriptions for the items to a
 database.
 
-The flask based Webgui then allows users to login with their Wikimedia account
+The Flask-based web GUI then allows users to log in with their Wikimedia account
 (using [OAUTH](https://www.mediawiki.org/wiki/OAuth/For_Developers)) and be
 presented with the potential matches.
 
@@ -25,15 +25,14 @@ https://tools.wmflabs.org/machtsinn/
 
 After logging in, use the buttons *Save* or *Reject match* to decide if an item
 really corresponds to a sense for the lexeme or not. Edits to Wikidata will be
-made in your name.  If you are unsure if it is a good match, click *Next*.
+made in your name. If you are unsure if it is a good match, click *Next*.
 
 ## Statisics of usage
 You can finde usage statistics here:
 https://tools.wmflabs.org/machtsinn/statistics
 
 You can also follow the recent changes on Wikidata using [this
-filter](https://www.wikidata.org/w/index.php?hidebots=1&hidenewpages=1&hidecategorization=1&hidelog=1&tagfilter=OAuth+CID%3A+1427&limit=50&days=7&title=Special:RecentChanges&urlversion=2)
-on Recent changes.
+filter](https://w.wiki/QSS) on Recent changes.
 
 ## Contributors
 * @Nudin
