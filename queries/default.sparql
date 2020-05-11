@@ -63,6 +63,7 @@ WHERE {
      wd:Q7366     # song
      wd:Q7397     # software
      wd:Q8134     # economics
+     wd:Q8502     # mountain
     }.
     ?item wdt:P31 ?not
   }
