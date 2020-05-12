@@ -7,11 +7,23 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  sparql:
     runs-on: ubuntu-latest
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
 
-    - name: Run query
-      run: curl -f --data-urlencode "query=$(cat $GITHUB_WORKSPACE/queries/default.sparql)" "https://query.wikidata.org/sparql?format=json"
+    - name: Run default query
+      run: curl --silent --fail --data-urlencode "query=$(cat $GITHUB_WORKSPACE/queries/default.sparql)" "https://query.wikidata.org/sparql?format=json" -o /dev/null
+
+    - name: Run en query
+      run: curl --silent --fail --data-urlencode "query=$(cat $GITHUB_WORKSPACE/queries/en.sparql)" "https://query.wikidata.org/sparql?format=json" -o /dev/null
+
+    - name: Run de query
+      run: curl --silent --fail --data-urlencode "query=$(cat $GITHUB_WORKSPACE/queries/de.sparql)" "https://query.wikidata.org/sparql?format=json" -o /dev/null
+      
+    - name: Run withoutdescriptions query
+      run: curl --silent --fail --data-urlencode "query=$(cat $GITHUB_WORKSPACE/queries/withoutdescriptions.sparql)" "https://query.wikidata.org/sparql?format=json" -o /dev/null      
+
+    - name: Run langcodes query
+      run: curl --silent --fail --data-urlencode "query=$(cat $GITHUB_WORKSPACE/queries/langcodes.sparql)" "https://query.wikidata.org/sparql?format=json" -o /dev/null
