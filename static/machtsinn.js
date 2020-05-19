@@ -362,6 +362,7 @@ var main = (function () {
   var updateLangList = function () {
     const oldLangStr = glossLanguages.join(',')
     const newLangStr = window.prompt('List of languages in which you want to add glosses.\n Comma separated language codes (Example: "de,en,fr")', oldLangStr)
+    if (newLangStr === null) { return }
     if (newLangStr === '') { window.alert('List cannot be empty'); return }
     const newList = newLangStr.split(/ ?, ?/)
     if (newList.sort().join() === glossLanguages.sort().join()) { return }
