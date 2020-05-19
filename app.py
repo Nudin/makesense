@@ -198,6 +198,7 @@ def save():
     token = get_tokens("csrf", auth1)
     username = flask.session.get("username", None)
     repo = LexData.WikidataSession(username=username, token=token, auth=auth1)
+    repo.maxlag = 17
 
     # Edit – if possible
     L = LexData.Lexeme(repo, lid)
