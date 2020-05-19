@@ -27,6 +27,20 @@ var main = (function () {
   var editmode = false
   var glossLanguages = []
 
+  var debug = function () {
+    console.log(queue)
+    console.log(promise)
+    console.log(current)
+    console.log(lastMatch)
+    console.log(lang)
+    console.log(langcode)
+    console.log(cache)
+    console.log(editmode)
+    console.log(glossLanguages)
+    var nextbtn = document.getElementById('nextbtn')
+    console.log(nextbtn.onclick)
+  }
+
   class PotentialMatch {
     constructor (row) {
       this.lexeme = row[0]
@@ -442,7 +456,8 @@ var main = (function () {
     },
     show: showCurrent,
     buttonpressed: next,
-    getlabel: getLabelCached
+    getlabel: getLabelCached,
+    debug: debug
   }
 })()
 
