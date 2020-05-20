@@ -67,6 +67,7 @@ var main = (function () {
     * the queue
     */
   var load = function () {
+    console.log('load()')
     return new Promise(function (resolve, reject) {
       var xhttp = new XMLHttpRequest()
       xhttp.open('GET', './getcandidates?lang=' + lang, true)
@@ -304,7 +305,11 @@ var main = (function () {
     // match in the queue – therefore remove them
     queue = queue.filter(m => current.notEqual(m))
 
+    debug()
     if (queue.length === 0) {
+      if (promise === null) {
+        promise = load()
+      }
       promise.then(showCurrent)
     } else {
       showCurrent()
