@@ -333,7 +333,7 @@ var main = (function () {
     data.append('LID', matchToSend.lid)
     data.append('lang', matchToSend.lang)
     glossLanguages.forEach(function (lang) {
-      if (lang in matchToSend.gloss) {
+      if (lang in matchToSend.gloss && matchToSend.gloss[lang] !== '') {
         data.append('gloss-' + lang, matchToSend.gloss[lang])
       }
     })
