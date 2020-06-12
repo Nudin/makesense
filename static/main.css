@@ -5,9 +5,9 @@
 }
 
 @media only screen and (max-width: 1024px) {
-  .grid-container {
-	grid-template-columns: 2em 1fr 2em;
-  }
+	.grid-container {
+		grid-template-columns: 2em 1fr 2em;
+	}
 }
 
 #editwarning {
@@ -129,9 +129,11 @@
 	display: none;
 }
 .editbtn, .commitbtn {
-	background-color: white;
-	border: none;
+	border: 1px solid #ccc;
+	border-radius: 20%;
+	cursor: pointer;
 	font-size: x-large;
+	margin-left: 0.5em;
 }
 #rejectbtn, #nextbtn, #savebtn {
 	margin: 0.5em;
@@ -179,5 +181,5 @@
 }
 
 #addLang {
-  font-size: 170%
+	font-size: 170%
 }
