@@ -116,6 +116,9 @@
 }
 
 /* Buttons */
+button {
+	cursor: pointer;
+}
 #buttons {
 	margin-bottom: 8px;
 	display: flex;
@@ -131,7 +134,6 @@
 .editbtn, .commitbtn {
 	border: 1px solid #ccc;
 	border-radius: 20%;
-	cursor: pointer;
 	font-size: x-large;
 	margin-left: 0.5em;
 }
