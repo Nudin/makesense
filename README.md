@@ -32,7 +32,7 @@ You can finde usage statistics here:
 https://tools.wmflabs.org/machtsinn/statistics
 
 You can also follow the recent changes on Wikidata using [this
-filter](https://w.wiki/QSS) on Recent changes.
+filter](https://w.wiki/ZwV) on Recent changes.
 
 ## Contributors
 * @Nudin
