@@ -16,6 +16,8 @@
 #
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
+import sys
+import os
 from typing import Dict, List, Optional, Tuple
 
 import mysql.connector
@@ -210,6 +212,8 @@ class Match:
     def get_lexeme_values(self) -> Tuple[int, int, Optional[int]]:
         return (self.lid, self.cat, self.genus)
 
+# Change dir to folder of script, to allow use of relative paths
+os.chdir(os.path.dirname(sys.argv[0]))
 
 db = MachtSinnDB()
 # Run Query #
