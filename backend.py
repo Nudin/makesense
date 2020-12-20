@@ -16,23 +16,15 @@
 #
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
-import sys
 import os
+import sys
 from typing import Dict, List, Optional, Tuple
 
 import mysql.connector
 import requests
 
-from dbconf import (
-    db_host,
-    db_name,
-    db_passwd,
-    db_table_lang_codes,
-    db_table_lexemes,
-    db_table_main,
-    db_table_texts,
-    db_user,
-)
+from dbconf import (db_host, db_name, db_passwd, db_table_lang_codes,
+                    db_table_lexemes, db_table_main, db_table_texts, db_user)
 
 user_agent = "makesense 0.1.0 by User:MichaelSchoenitzer"
 
@@ -43,7 +35,9 @@ def runquery(url, params={}, session=requests):
     r = session.get(url, headers=headers, params=params)
     if r.status_code == 200:
         return r.json()["results"]
-    raise Exception("Query failed:", r.text)
+    if r.status_code == 429 or r.status_code == 500:
+        raise TimeoutError(r.text)
+    raise ValueError(r.text)
 
 
 # Run a Spaql-Query
@@ -212,6 +206,7 @@ class Match:
     def get_lexeme_values(self) -> Tuple[int, int, Optional[int]]:
         return (self.lid, self.cat, self.genus)
 
+
 # Change dir to folder of script, to allow use of relative paths
 os.chdir(os.path.dirname(sys.argv[0]))
 
@@ -242,16 +237,23 @@ for filename in queries:
         print("Language Filter:", lang_filter)
 
     print("Running query", filename)
-    res = runSPARQLquery(sparql_query)
-    print("Collect results…")
-    num_matches = len(res)
-    matches = [Match(row) for row in res]
-    print(
-        "Adding {} matches ({} rows) to Database…".format(num_matches, 3 * num_matches)
-    )
-    db.add_matches(map(Match.get_match_values, matches))
-    db.add_texts(map(Match.get_text_values, matches))
-    db.add_lexeminfo(map(Match.get_lexeme_values, matches))
+    try:
+        res = runSPARQLquery(sparql_query)
+        print("Collect results…")
+        num_matches = len(res)
+        matches = [Match(row) for row in res]
+        print(
+            "Adding {} matches ({} rows) to Database…".format(
+                num_matches, 3 * num_matches
+            )
+        )
+        db.add_matches(map(Match.get_match_values, matches))
+        db.add_texts(map(Match.get_text_values, matches))
+        db.add_lexeminfo(map(Match.get_lexeme_values, matches))
+    except ValueError as e:
+        print("Query failed, skipping", e)
+    except TimeoutError as e:
+        print("Query timed out", e)
     db.commit()
 
 # Query for the wikimedia language codes #
