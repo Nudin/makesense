@@ -64,31 +64,35 @@ WHERE {
      wd:Q7366     # song
      wd:Q7397     # software
      wd:Q8134     # economics
-     # so9qs improvements for swedish
+     # improvements for swedish
+     wd:Q3744866  # common charge (heraldic)
      wd:Q1145276  # fictional country (star trek)
      wd:Q99281788 # star trek location
      wd:Q13406463 # wikimedia list article
      wd:Q19798642 # WD value
-     # motion from Riksdagen
-     wd:Q329547	  # motion of no confidence
-     wd:Q330094	  # motion of confidence
-     wd:Q1939218	  # motion of no confidence
-     wd:Q2751586	  # resolution
-     wd:Q4780960	  # appeal
-     wd:Q6518229	  # Legislative Consent Motion
-     wd:Q6917734	  # motion
-     wd:Q96739634	  # individual motion
-     wd:Q97695005	  # committee group motion
-     wd:Q97695011	  # party motion
-     wd:Q97695021	  # multi-party motion
-     wd:Q97695043	  # follow-up motion
-     wd:Q452237	  # motion
-     # other stuff from riksdagen
-     wd:Q99045339 # written question
+     # stuff from riksdagen
+     wd:Q99045339     # written question
+     wd:Q1505023      # interpellation
     }.
     ?item wdt:P31 ?not
   }
+  
+  # Remove various common false positives via P279
+  FILTER NOT EXISTS {
+    VALUES ?not {
+      wd:Q55043        # gymnasium
+      wd:Q15284        # municipality
+      wd:Q15911314     # association
+    }.
+    ?item wdt:P279 ?not.
+  }   
   FILTER NOT EXISTS { ?item a wikibase:Property}.     # filter properties
   FILTER NOT EXISTS { ?item wdt:P131 ?_ }.            # filter geographic items
   FILTER NOT EXISTS { ?lexeme wdt:P5402 ?_ }.         # filter homographs
+  FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q494452  }.   # blazonry
+  FILTER NOT EXISTS { ?item wdt:P279* wd:Q494452  }.           # blazonry
+  FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q11446  }.    # ship 
+  FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q452237  }.   # motion
+  FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q7302866  }.   # audio track (basshunter song)
+  FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q15706911  }. # fictional device (teenage mutant ninja turtles
 }
