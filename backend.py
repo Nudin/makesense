@@ -50,7 +50,7 @@ class MachtSinnDB:
 
     # This variable should be incremented every time the query is changed
     # and the database should be pruned from data that is not in the query anymore
-    dataversion = 5
+    dataversion = 6
 
     def __init__(self):
         # Open SQL-Connection
@@ -218,6 +218,7 @@ queries = [
     "queries/default.sparql",
     "queries/en.sparql",
     "queries/de.sparql",
+    "queries/sv.sparql",
     "queries/withoutdescriptions.sparql",
 ]
 for filename in queries:
