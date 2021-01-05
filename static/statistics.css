@@ -22,3 +22,11 @@ tr.total {
 tbody tr td:last-child {
     text-align: right;
 }
+.updated{
+	margin-top: 10px;
+	grid-column: 1/4;
+	font-weight: bold;
+}
+.date{
+	font-weight: normal;
+}

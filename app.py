@@ -18,6 +18,7 @@
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import datetime
 import json
 import os
 import urllib
@@ -163,14 +164,16 @@ def reject():
 
     # Update DB status
     cursor = db.connection.cursor()
+    timestamp = datetime.datetime.now(datetime.timezone.utc)
     cursor.execute(
         """
         UPDATE
         matches
-        SET status = -1
+        SET status = -1,
+        timestamp = "%s"
         WHERE QID = %s and LID = %s
         """,
-        (qid[1:], lid[1:]),
+        (timestamp, qid[1:], lid[1:]),
     )
     cursor.close()
     db.connection.commit()
@@ -206,17 +209,20 @@ def save():
         claims = sense.claims.get("P5137")
         if claims and claims[0].value["id"] == qid:
             cursor = db.connection.cursor()
+            timestamp = datetime.datetime.now(datetime.timezone.utc)
             cursor.execute(
                 """
                 UPDATE
                 matches
-                SET status = 2
+                SET status = 2,
+                timestamp = "%s"
                 WHERE QID = %s and LID = %s
                 """,
-                (qid[1:], lid[1:]),
+                (timestamp,qid[1:], lid[1:]),
             )
             cursor.close()
             db.connection.commit()
+            updated = datime
             return "Sense already existing", 409
     # TODO: check if this can be removed
     if lang not in languages:
@@ -230,14 +236,16 @@ def save():
 
     # Update DB status
     cursor = db.connection.cursor()
+    timestamp = datetime.datetime.now(datetime.timezone.utc)
     cursor.execute(
         """
         UPDATE
         matches
-        SET status = 1
+        SET status = 1,
+        timestamp= "%s" 
         WHERE QID = %s and LID = %s
         """,
-        (qid[1:], lid[1:]),
+        (timestamp, qid[1:], lid[1:]),
     )
     cursor.close()
     db.connection.commit()
@@ -246,9 +254,10 @@ def save():
 
 @app.route("/statistics", methods=["GET"])
 def statistics():
+    temp = {}
     cursor = db.connection.cursor()
     cursor.execute(
-        """SELECT languages.code, count(*)
+        """SELECT timestamp, languages.code, count(*)
         from matches join languages
         on matches.lang = languages.lang
         where status = %s
@@ -257,8 +266,15 @@ def statistics():
         (1,),
     )
     added = cursor.fetchall()
+    try:
+        added_ts = max([row[0] for row in added]) 
+    except (ValueError, TypeError) as e:
+        added_ts = None
+        print(e)
+    
+    temp['added_ts'] = added_ts
     cursor.execute(
-        """SELECT languages.code, count(*)
+        """SELECT timestamp, languages.code, count(*)
         from matches join languages
         on matches.lang = languages.lang
         where status = %s
@@ -267,8 +283,14 @@ def statistics():
         (-1,),
     )
     rejected = cursor.fetchall()
+    try:    
+        rejected_ts = max([row[0] for row in rejected if row[0]]) 
+    except (ValueError, TypeError) as e:
+        rejected_ts = None
+        print(e)
+    temp['rejected_ts'] = rejected_ts
     cursor.execute(
-        """SELECT languages.code, count(*)
+        """SELECT timestamp, languages.code, count(*)
         from matches join languages
         on matches.lang = languages.lang
         where status = %s
@@ -277,10 +299,25 @@ def statistics():
         (0,),
     )
     todo = cursor.fetchall()
+    try:
+        todo_ts = max([row[0] for row in todo if row[0]]) 
+    except (TypeError, ValueError) as e:
+        todo_ts = None
+        print(e)
+
+    temp['todo_ts'] = todo_ts
     cursor.close()
     username = flask.session.get("username", None)
+    try:
+        update = max([v] for k, v in temp.items() if v) 
+    except ValueError:
+        update = ''
+        pass
+    else:
+        update = update[0].strftime('%c')
     return flask.render_template(
-        "statistics.html", added=added, todo=todo, rejected=rejected, username=username
+        "statistics.html", added=added, todo=todo, rejected=rejected, username=username,
+        updated = update
     )
 
 

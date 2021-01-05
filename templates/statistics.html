@@ -8,6 +8,9 @@
 {% endblock %}
 
 {% block content %}
+<div class="updated stat">
+        Database Recently Updated: <span class="date">{{ updated }}</span>
+</div>
 <div class="stat">
 <h1>Senses added with MachtSinn</h1>
 <table>
@@ -17,13 +20,13 @@
         </tr>
         <tr class="total">
                 <td>Total</td>
-                <td>{{added|sum(attribute='1')}}</td>
+                <td>{{added|sum(attribute='2')}}</td>
         </tr>
 
         {% for row in added -%}
         <tr>
-                <td>{{row[0]}}</td>
                 <td>{{row[1]}}</td>
+                <td>{{row[2]}}</td>
         </tr>
         {% endfor %}
 </table>
@@ -38,13 +41,13 @@
         </tr>
         <tr class="total">
                 <td>Total</td>
-                <td>{{todo|sum(attribute='1')}}</td>
+                <td>{{todo|sum(attribute='2')}}</td>
         </tr>
 
         {% for row in todo -%}
         <tr>
-                <td>{{row[0]}}</td>
                 <td>{{row[1]}}</td>
+                <td>{{row[2]}}</td>
         </tr>
         {% endfor %}
 </table>
@@ -59,13 +62,13 @@
         </tr>
         <tr class="total">
                 <td>Total</td>
-                <td>{{rejected|sum(attribute='1')}}</td>
+                <td>{{rejected|sum(attribute='2')}}</td>
         </tr>
 
         {% for row in rejected -%}
         <tr>
-                <td>{{row[0]}}</td>
                 <td>{{row[1]}}</td>
+                <td>{{row[2]}}</td>
         </tr>
         {% endfor %}
 </table>
