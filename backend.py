@@ -26,6 +26,7 @@ import requests
 from dbconf import (db_host, db_name, db_passwd, db_table_lang_codes,
                     db_table_lexemes, db_table_main, db_table_texts, db_user)
 
+import datetime
 user_agent = "makesense 0.1.0 by User:MichaelSchoenitzer"
 
 
@@ -43,7 +44,7 @@ def runquery(url, params={}, session=requests):
 # Run a Spaql-Query
 def runSPARQLquery(query):
     endpoint_url = "https://query.wikidata.org/sparql"
-    return runquery(endpoint_url, params={"format": "json", "query": query})["bindings"]
+    return runquery(endpoint_url, params={"format":"json","query": query})["bindings"]
 
 
 class MachtSinnDB:
@@ -77,6 +78,7 @@ class MachtSinnDB:
              `LID` INT,
              `Status` INT,
              `version` INT,
+             `timestamp` DATETIME,
              PRIMARY KEY (`lang`,`QID`,`LID`)
         );""".format(
                 db_table_main
@@ -128,11 +130,12 @@ class MachtSinnDB:
 
     def add_matches(self, values):
         sql = """INSERT INTO {0}
-                 (lang, QID, LID, Status, version)
+                 (lang, QID, LID, Status, version, timestamp)
                  VALUES
-                 (%s, %s, %s, %s, {1})
+                 (%s, %s, %s, %s, {1}, '{2}')
                  ON DUPLICATE KEY UPDATE version = {1}""".format(
-            db_table_main, self.dataversion
+            db_table_main, self.dataversion, 
+            datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         )
         self.save_executemany(sql, values)
 
@@ -208,7 +211,7 @@ class Match:
 
 
 # Change dir to folder of script, to allow use of relative paths
-os.chdir(os.path.dirname(sys.argv[0]))
+# os.chdir(os.path.dirname(sys.argv[0]))
 
 db = MachtSinnDB()
 # Run Query #
@@ -255,6 +258,7 @@ for filename in queries:
         print("Query failed, skipping", e)
     except TimeoutError as e:
         print("Query timed out", e)
+
     db.commit()
 
 # Query for the wikimedia language codes #
