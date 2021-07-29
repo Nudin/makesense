@@ -94,6 +94,8 @@ WHERE {
       wd:Q55043        # gymnasium
       wd:Q15284        # municipality
       wd:Q15911314     # association
+      # 2021-07-29
+      wd:Q13220204     # second-level administrative country subdivision
     }.
     ?item wdt:P279 ?not.
   }   
