@@ -1,3 +1,7 @@
+# This query is special because there are so many matches still
+# We cannot use wdt:P31/wdt:P279* traversals because they cause timeouts
+# This query behaves odd and sometimes tak 26 seconds and sometimes time out.
+
 SELECT ?lexeme ?item ?lemma ?desc ?cat ?genus (wd:Q1860 as ?lang) WITH {
   SELECT *
   WHERE {
@@ -18,6 +22,8 @@ SELECT ?lexeme ?item ?lemma ?desc ?cat ?genus (wd:Q1860 as ?lang) WITH {
 WHERE {
   include %i
   # Filter out common false-positives
+  # anything not having a P31 has to go too (this is the first thing to relax when few positives are left)
+  filter not exists {?item wdt:P31 [].} # stuff without P31 which is usually false positives 
   FILTER NOT EXISTS { ?item wdt:P131 ?_ }.
   FILTER NOT EXISTS {
     VALUES ?not {
@@ -78,6 +84,19 @@ WHERE {
 		wd:Q99045339     # written question
 		wd:Q99281788 # star trek location
         wd:Q29168811 # animated film
+        # 2021-07-29
+        wd:Q5398426  # tv series
+        wd:Q3744880  # nature figure (heraldry)
+        wd:Q6881511  # enterprise
+        wd:Q3658341  # literary character
+        wd:Q1475691  # mars crater
+        wd:Q1348589  # lunar crater
+        wd:Q20643955 # biblical human figure
+        wd:Q134556   # single (music)
+        wd:Q786820   # automobile manuf.
+        wd:Q11060274 # print
+        wd:Q18218093 # other type of art
+        wd:Q7725634  # literary work
   }.
     ?item wdt:P31 ?not  }.
   # filter on properties:
@@ -86,10 +105,19 @@ WHERE {
       wdt:P688 # gene stuff
       wdt:P195 # collection (of art)
       wdt:P1482 # stack exchange
+      # 2021-07-29
+      #wdt:P8514  # brazilian import that has a lot of false positives
       }
       ?item ?not2 [] }.
-  # anything not having a P31 has to go too (this is the first thing to relax when few positives are left)
-  #filter not exists {?item wdt:P31 ?dummy.} # stuff without P31 which is usually false positives 
+  # filter on subclass:
+  FILTER NOT EXISTS {
+    VALUES ?not3 {
+      # 2021-07-29
+      #wd:Q192249  # saddle
+      #wd:Q14745   # furniture
+      wd:Q783794  # company
+      }
+      ?item wdt:279 ?not3 }.
   # special terminology often match these descriptions
   FILTER (!regex(?desc, '.*theory.*')) .
   FILTER (!regex(?desc, '.*mathemat.*')) .
@@ -100,4 +128,6 @@ WHERE {
   FILTER (!regex(?desc, '.*C++.*')) .
   FILTER (!regex(?desc, '.*Unix.*')) .
   FILTER (!regex(?desc, '.* law .*')) .
+  # 2021-07-29
+  FILTER (!regex(?desc, '.*heraldic.*')) .
 }
