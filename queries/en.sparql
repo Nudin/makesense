@@ -21,36 +21,65 @@ WHERE {
   FILTER NOT EXISTS { ?item wdt:P131 ?_ }.
   FILTER NOT EXISTS {
     VALUES ?not {
-    wd:Q4167410
-    wd:Q101352
-    wd:Q13417114
-    wd:Q15632617
-    wd:Q215380   # bands
-    wd:Q23786    # eye color
-    wd:Q40056    # software
-    wd:Q3491429  # military terms
-    wd:Q7187     # gene
-    wd:Q19798644 # wikibase model terms
-    wd:Q11668273 # shogi pieces
-    wd:Q17155032 # type of software
-    wd:Q17638537 # routine - fix computer terminology
-    wd:Q11446    # ships
-    wd:Q2235308  # types of ships
-    wd:Q17537576 # any creative work incl. music, video, text, etc.
-    wd:Q8134     # economics
-    wd:Q20202269 # music terms
-    wd:Q395      # math
-    wd:Q494452   # heraldry
-    wd:Q1391494  # technical terminology
-    wd:Q57814795 # domesticated animal
-    wd:Q1725664  # terminology of any kind
-    wd:Q43229    # organization of any kind
-    wd:Q147276   # names of any kind
-    wd:Q15642541 # human settlement definions
-    wd:Q5        # human
-    wd:Q4167836  # wikimedia cat
+		wd:Q101352   # surname
+		wd:Q10429085     # report
+		wd:Q105543609 # musical work
+		wd:Q11424    # movie
+		wd:Q11446    # ships
+		wd:Q1145276  # fictional country (star trek)
+		wd:Q11668273 # shogi pieces
+		wd:Q1229071  # motif
+		wd:Q13406463 # wikimedia list article
+		wd:Q13417114 # noble family
+		wd:Q1391494  # technical terminology
+		wd:Q147276   # names of any kind
+		wd:Q1505023      # interpellation
+		wd:Q15056993  # aircraft family
+		wd:Q15632617 # fictive person
+		wd:Q15642541 # human settlement definitions
+		wd:Q15831596  # class of fictional entities e.g. star wars sandcrawler
+		wd:Q17155032 # type of software
+		wd:Q1725664  # terminology of any kind
+		wd:Q17537576 # any creative work incl. music, video, text, etc.
+		wd:Q17638537 # routine - fix computer terminology
+		wd:Q1897960   # trotting horse
+		wd:Q19798642 # WD value
+		wd:Q19798644 # wikibase model terms
+		wd:Q19798645 # wikibase datatype
+		wd:Q20202269 # music terms
+		wd:Q208569   # album
+		wd:Q21191270 # tv series episode
+		wd:Q215380   # bands
+		wd:Q2235308  # types of ships
+		wd:Q23786    # eye color
+		wd:Q3305213  # painting
+		wd:Q3331189   # version, edition, or translation
+		wd:Q3491429  # military terms
+		wd:Q355304    # watercourse (this has a lot of false positives that are not relevant in a Swedish lexeme context)
+		wd:Q3744866  # common charge (heraldic)
+		wd:Q386724    # work
+		wd:Q395      # math
+		wd:Q40056    # software
+		wd:Q4167410  # disambigpage
+		wd:Q4167836  # wikimedia cat
+		wd:Q43229    # organization of any kind
+		wd:Q482994   # album
+		wd:Q494452   # heraldry
+		wd:Q5        # human
+		wd:Q5185279  # poem
+		wd:Q56876983 # symbol (heraldic)
+		wd:Q57814795 # domesticated animal
+		wd:Q58408484  # Wikimedia list of persons by surname
+		wd:Q7187     # gene
+		wd:Q7366     # song
+		wd:Q7397     # software
+		wd:Q8134     # economics
+		wd:Q819989    # lunar crater
+		wd:Q99045339     # written question
+		wd:Q99281788 # star trek location
+        wd:Q29168811 # animated film
   }.
-    ?item wdt:P31/(wdt:P279*) ?not  }.
+    ?item wdt:P31 ?not  }.
   # filter on properties:
   FILTER NOT EXISTS {
     VALUES ?not2 {
@@ -58,7 +87,7 @@ WHERE {
       wdt:P195 # collection (of art)
       wdt:P1482 # stack exchange
       }
-      ?item ?not2 ?_ }.
+      ?item ?not2 [] }.
   # anything not having a P31 has to go too (this is the first thing to relax when few positives are left)
   #filter not exists {?item wdt:P31 ?dummy.} # stuff without P31 which is usually false positives 
   # special terminology often match these descriptions
