@@ -51,7 +51,6 @@ WHERE {
      wd:Q3491429  # military terms
      wd:Q395      # math
      wd:Q40056    # software
-     wd:Q4167410  # disambiguation page
      wd:Q4167836  # wikimedia cat
      wd:Q43229    # organization of any kind
      wd:Q482994   # album
@@ -64,6 +63,7 @@ WHERE {
      wd:Q7366     # song
      wd:Q7397     # software
      wd:Q8134     # economics
+     
      # improvements for swedish
      wd:Q3744866  # common charge (heraldic)
      wd:Q1145276  # fictional country (star trek)
@@ -73,6 +73,17 @@ WHERE {
      # stuff from riksdagen
      wd:Q99045339     # written question
      wd:Q1505023      # interpellation
+     wd:Q10429085     # report
+     # 2021-07-28
+     wd:Q15831596  # class of fictional entities e.g. star wars sandcrawler
+     wd:Q105543609 # musical work
+     wd:Q3331189   # version, edition, or translation
+     wd:Q1897960   # trotting horse
+     wd:Q15056993  # aircraft family
+     wd:Q355304    # watercourse (this has a lot of false positives that are not relevant in a Swedish lexeme context)
+     wd:Q819989    # lunar crater
+     wd:Q58408484  # Wikimedia list of persons by surname
+     wd:Q386724    # work
     }.
     ?item wdt:P31 ?not
   }
@@ -83,6 +94,8 @@ WHERE {
       wd:Q55043        # gymnasium
       wd:Q15284        # municipality
       wd:Q15911314     # association
+      # 2021-07-29
+      wd:Q13220204     # second-level administrative country subdivision
     }.
     ?item wdt:P279 ?not.
   }   
@@ -91,8 +104,16 @@ WHERE {
   FILTER NOT EXISTS { ?lexeme wdt:P5402 ?_ }.         # filter homographs
   FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q494452  }.   # blazonry
   FILTER NOT EXISTS { ?item wdt:P279* wd:Q494452  }.           # blazonry
+  FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q1406161  }.  # artistic theme 
+  FILTER NOT EXISTS { ?item wdt:P361 wd:Q18336}.               # part of heraldry
   FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q11446  }.    # ship 
   FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q452237  }.   # motion
   FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q7302866  }.   # audio track (basshunter song)
-  FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q15706911  }. # fictional device (teenage mutant ninja turtles
+  # 2021-07-28
+  FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q14897293  }. # fictional entity
+  FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q23010327  }. # fictional objects
+  FILTER NOT EXISTS { ?item wdt:P136 [].}                      # genre (music, etc)
+  FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q4167410  }.  # disambiguation pages
+  FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q17537576  }. # creative work         (very expensive)
+  FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q35872  }.    # boat                  (medium expensive)
 }
