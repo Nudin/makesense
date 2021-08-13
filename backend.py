@@ -252,11 +252,11 @@ for filename in queries:
         db.add_matches(map(Match.get_match_values, matches))
         db.add_texts(map(Match.get_text_values, matches))
         db.add_lexeminfo(map(Match.get_lexeme_values, matches))
+        db.commit()
     except ValueError as e:
         print("Query failed, skipping", e)
     except TimeoutError as e:
         print("Query timed out", e)
-    db.commit()
 
 # Query for the wikimedia language codes #
 with open("queries/langcodes.sparql") as f:
