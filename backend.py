@@ -217,6 +217,7 @@ print("Running queries…")
 queries = [
     "queries/default.sparql",
     "queries/en.sparql",
+    "queries/fr.sparql",
     "queries/de.sparql",
     "queries/sv.sparql",
     "queries/withoutdescriptions.sparql",
