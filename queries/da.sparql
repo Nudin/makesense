@@ -86,7 +86,7 @@ WHERE {
     ?item wdt:P31 ?not
   }
   
-  # Remove various common false positives via P279
+  # Subclass of
   FILTER NOT EXISTS {
     VALUES ?not {
       wd:Q55043        # gymnasium
@@ -94,6 +94,7 @@ WHERE {
       wd:Q15911314     # association
       # 2021-07-29
       wd:Q13220204     # second-level administrative country subdivision
+      wd:Q1266830      # pokemon
     }.
     ?item wdt:P279 ?not.
   }   
@@ -114,4 +115,8 @@ WHERE {
   FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q4167410  }.  # disambiguation pages
   FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q17537576  }. # creative work         (very expensive)
   FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q35872  }.    # boat                  (medium expensive)
+    FILTER NOT EXISTS { ?item a wikibase:Property}.     # filter properties
+  # 2021-08-17
+  FILTER NOT EXISTS { ?item wdt:P1269 wd:Q14659}.     # filter coat of arms
+  FILTER NOT EXISTS { ?item wdt:P1269 wd:Q18336}.     # filter heraldry
 }
