@@ -71,4 +71,6 @@ WHERE {
       wdt:P1482 # stack exchange
       }
       ?item ?not2 ?_ }.
+  # Filter out descriptions with only one word
+  FILTER(contains(?desc, ' '))
 }
