@@ -22,8 +22,8 @@ jobs:
     - name: Run de query
       run: curl --silent --fail --data-urlencode "query=$(cat $GITHUB_WORKSPACE/queries/de.sparql)" "https://query.wikidata.org/sparql?format=json" -o /dev/null
       
-    - name: Run withoutdescriptions query
-      run: curl --silent --fail --data-urlencode "query=$(cat $GITHUB_WORKSPACE/queries/withoutdescriptions.sparql)" "https://query.wikidata.org/sparql?format=json" -o /dev/null      
+    #- name: Run withoutdescriptions query
+    #  run: curl --silent --fail --data-urlencode "query=$(cat $GITHUB_WORKSPACE/queries/withoutdescriptions.sparql)" "https://query.wikidata.org/sparql?format=json" -o /dev/null      
 
     - name: Run langcodes query
       run: curl --silent --fail --data-urlencode "query=$(cat $GITHUB_WORKSPACE/queries/langcodes.sparql)" "https://query.wikidata.org/sparql?format=json" -o /dev/null
