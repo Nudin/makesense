@@ -114,16 +114,5 @@ WHERE {
       wd:Q18336  # heraldry
       wd:Q14659  # coat of arms
       }
-    ?item wdt:P1269 ?aspect_of }. 
-  # special terminology often match these descriptions
-  FILTER (!regex(?desc, '.*theory.*')) .
-  FILTER (!regex(?desc, '.*mathemat.*')) .
-  FILTER (!regex(?desc, '.*geolog.*')) .
-  FILTER (!regex(?desc, '.*anatomy.*')) .
-  FILTER (!regex(?desc, '.*military.*')) .
-  FILTER (!regex(?desc, '.*taxonomic.*')) .
-  FILTER (!regex(?desc, '.*C++.*')) .
-  FILTER (!regex(?desc, '.*Unix.*')) .
-  FILTER (!regex(?desc, '.* law .*')) .
-  FILTER (!regex(?desc, '.*heraldic.*')) .
+    ?item wdt:P1269 ?aspect_of }.
 }
