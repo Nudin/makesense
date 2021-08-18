@@ -3,13 +3,22 @@ SELECT * WHERE {
   # The order of these joins is manually optimized
   hint:Query hint:optimizer "None".
 
-  # Search for lexemes in any language except English, German and Swedish
-  # (they have their own query)
-  ?lexeme  dct:language ?lang.  FILTER( ?lang != wd:Q1860 && ?lang != wd:Q188 && ?lang != wd:Q9027 && ?lang != wd:Q150).
+  # Search for lexemes in any language except those that
+  # have their own query
+  ?lexeme  dct:language ?lang.  
+  FILTER(?lang != wd:Q1860 &&   #en
+         ?lang != wd:Q188 &&    #de
+         ?lang != wd:Q9027 &&   #sv
+         ?lang != wd:Q25167 &&  #nb
+         ?lang != wd:Q150 &&    #fr
+         ?lang != wd:Q9035 &&   #da
+         ?lang != wd:Q9288      #he
+        ).
   ?lexeme wikibase:lemma ?lemma.
   # Search for potentially matching items with descriptions
   ?item rdfs:label ?lemma.
-  ?item schema:description ?desc.	FILTER(LANG(?desc) = LANG(?lemma)).
+  ?item schema:description ?desc.	
+  FILTER(LANG(?desc) = LANG(?lemma)).
   # get lexical category and genus
   ?lexeme         wikibase:lexicalCategory ?cat.
   OPTIONAL { ?lexeme wdt:P5185 ?genus. } .
@@ -68,14 +77,10 @@ WHERE {
     ?item wdt:P31 ?not
   }
   # Remove various common false positives that are any subclass of
-  FILTER NOT EXISTS {
-    VALUES ?not2 {
-     wd:Q735      # art (incl. heraldics)
-    }.
-    # This is more expensive than the P31 filter above and might time out
-    ?item wdt:P31/wdt:P279* ?not2
-  }
+  
   FILTER NOT EXISTS { ?item a wikibase:Property}.     # filter properties
-  FILTER NOT EXISTS { ?item wdt:P131 ?_ }.            # filter geographic items
-  FILTER NOT EXISTS { ?lexeme wdt:P5402 ?_ }.         # filter homographs
+  FILTER NOT EXISTS { ?item wdt:P131 [] }.            # filter geographic items
+  FILTER NOT EXISTS { ?lexeme wdt:P5402 [] }.         # filter homographs
+  FILTER NOT EXISTS { ?item wdt:P1269 wd:Q14659}.     # filter coat of arms
+  FILTER NOT EXISTS { ?item wdt:P1269 wd:Q18336}.     # filter heraldry
 }
