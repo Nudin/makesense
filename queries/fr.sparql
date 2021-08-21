@@ -95,6 +95,7 @@ WHERE {
         wd:Q7725634  # literary work
         wd:Q22808320 # disambig name type
         wd:Q3404720  # tincture
+	    wd:Q66050470 # conjugation table
   }.
     ?item wdt:P31 ?not  }.
   # filter on properties:
@@ -134,5 +135,6 @@ WHERE {
       }
       ?item wdt:P361 ?not3 }.
   # special terminology often match these descriptions
-  FILTER (!regex(?desc, '.*taxinomique.*')) .
+  FILTER(!contains(?desc, 'taxinomique')) .
+  FILTER(!contains(?desc, 'héraldique')).
 }
