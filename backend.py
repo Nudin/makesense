@@ -137,21 +137,19 @@ class MachtSinnDB:
         self.save_executemany(sql, values)
 
     def add_texts(self, values):
-        sql = """INSERT INTO {0}
+        sql = """REPLACE INTO {0}
                  (lang, QID, lemma, gloss, version)
                  VALUES
-                 (%s, %s, %s, %s, {1})
-                 ON DUPLICATE KEY UPDATE version = {1}""".format(
+                 (%s, %s, %s, %s, {1})""".format(
             db_table_texts, self.dataversion
         )
         self.save_executemany(sql, values)
 
     def add_lexeminfo(self, values):
-        sql = """INSERT INTO {0}
+        sql = """REPLACE INTO {0}
                  (lid, category, genus, version)
                  VALUES
-                 (%s, %s, %s, {1})
-                 ON DUPLICATE KEY UPDATE version = {1}""".format(
+                 (%s, %s, %s, {1})""".format(
             db_table_lexemes, self.dataversion
         )
         self.save_executemany(sql, values)
