@@ -245,7 +245,6 @@ def save():
 
 @app.route("/statistics", methods=["GET"])
 def statistics():
-    print("why")
     cursor = db.connection.cursor()
     cursor.execute(
         """SELECT languages.code, count(*)
