@@ -17,7 +17,7 @@
 #
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+import datetime
 import json
 import os
 import urllib
@@ -246,6 +246,7 @@ def save():
 
 @app.route("/statistics", methods=["GET"])
 def statistics():
+    print("why")
     cursor = db.connection.cursor()
     cursor.execute(
         """SELECT languages.code, count(*)
@@ -277,10 +278,19 @@ def statistics():
         (0,),
     )
     todo = cursor.fetchall()
+
+    cursor.execute(
+        """SELECT UPDATE_TIME
+        FROM   information_schema.tables
+        WHERE  TABLE_SCHEMA = %s
+        AND TABLE_NAME = 'languages'""",(db_name,)
+    )
+    raw_most_recent = cursor.fetchone()[0]
+    most_recent = raw_most_recent.strftime("%b %d, %Y %I:%M%p")
     cursor.close()
     username = flask.session.get("username", None)
     return flask.render_template(
-        "statistics.html", added=added, todo=todo, rejected=rejected, username=username
+        "statistics.html", added=added, todo=todo, rejected=rejected, username=username, most_recent=most_recent
     )
 
 
