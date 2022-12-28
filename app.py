@@ -23,15 +23,15 @@ import urllib
 
 import flask
 import LexData
+import mwoauth
 import requests
 import yaml
 from flask import request
 from flask.logging import create_logger
-
-import mwoauth
-from dbconf import db_host, db_name, db_passwd, db_user
 from flask_mysqldb import MySQL
 from requests_oauthlib import OAuth1
+
+from dbconf import db_host, db_name, db_passwd, db_user
 
 app = flask.Flask(__name__)
 
@@ -309,7 +309,9 @@ def login():
     """
     try:
         redirect, request_token = mwoauth.initiate(
-            app.config["OAUTH_MWURI"], consumer_token, callback="https://machtsinn.toolforge.org/oauth-callback"
+            app.config["OAUTH_MWURI"],
+            consumer_token,
+            callback="https://machtsinn.toolforge.org/oauth-callback",
         )
     except Exception:
         log.exception("mwoauth.initiate failed")
@@ -323,7 +325,7 @@ def login():
 def oauth_callback():
     """OAuth handshake callback."""
     if "request_token" not in flask.session:
-        flask.flash(u"OAuth callback failed. Are cookies disabled?")
+        flask.flash("OAuth callback failed. Are cookies disabled?")
         return flask.redirect(flask.url_for("index"))
 
     try:
