@@ -69,8 +69,10 @@ class MachtSinnDB:
             self.mydb.database = db_name
         self.create_tables()
 
-    def update_timestamp(self):
-        self.cursor.execute("REPLACE INTO last_updated (`id`, `Date`) VALUES (1, CURRENT_DATE());")
+    def update_timestamp(self, query):
+        self.cursor.execute(
+            "REPLACE INTO last_updated (`query`, `Date`) VALUES (%s, NOW());", (query,)
+        )
 
     def create_tables(self):
         self.cursor.execute(
@@ -122,9 +124,8 @@ class MachtSinnDB:
         )
 
         self.cursor.execute(
-            """CREATE TABLE IF NOT EXISTS last_updated (`id` INT, `Date` Date, PRIMARY KEY (`id`));"""
+            """CREATE TABLE IF NOT EXISTS last_updated (`query` VARCHAR(128) PRIMARY KEY, `Date` Datetime);"""
         )
-
 
     def save_executemany(self, sql_query, values):
         try:
@@ -261,6 +262,7 @@ for filename in queries:
         db.add_texts(map(Match.get_text_values, matches))
         db.add_lexeminfo(map(Match.get_lexeme_values, matches))
         db.commit()
+        db.update_timestamp(filename.split("/")[1])
     except ValueError as e:
         print("Query failed, skipping", e)
     except TimeoutError as e:
@@ -274,10 +276,11 @@ res = runSPARQLquery(sparql)
 langlist = [(row["lang"]["value"][32:], row["code"]["value"]) for row in res]
 
 db.add_languages(langlist)
+db.update_timestamp("langlist")
 db.commit()
 
 # Delete old entries #
 print("Pruning old matches")
 db.prune_old()
-db.update_timestamp()
+db.update_timestamp("prune_old")
 db.commit()
