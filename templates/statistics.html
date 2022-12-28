@@ -8,9 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="updated stat">
-        Time of Most Recent Update: <span class="date">{{ most_recent }}</span>
-</div>
+
 <div class="stat">
 <h1>Senses added with MachtSinn</h1>
 <table>
@@ -66,6 +64,22 @@
         </tr>
 
         {% for row in rejected -%}
+        <tr>
+                <td>{{row[0]}}</td>
+                <td>{{row[1]}}</td>
+        </tr>
+        {% endfor %}
+</table>
+</div>
+
+<div class="stat">
+<h1>Time of Most Recent Update</h1>
+<table>
+        <tr>
+                <th>Query</th>
+                <th>Last successful run</th>
+        </tr>
+        {% for row in update_times -%}
         <tr>
                 <td>{{row[0]}}</td>
                 <td>{{row[1]}}</td>

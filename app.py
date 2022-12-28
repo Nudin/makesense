@@ -277,20 +277,26 @@ def statistics():
     )
     todo = cursor.fetchall()
 
-    try:
-        cursor.execute(
-            """SELECT date
-            FROM   last_updated
-            WHERE query='prune_old'""",
-        )
-        raw_most_recent = cursor.fetchone()[0]
-        most_recent = raw_most_recent.strftime("%b %d, %Y %I:%M%p")
-    except IndexError:
-        most_recent = "unkown"
+    cursor.execute(
+        """SELECT query, date
+        FROM   last_updated""",
+    )
+    raw_update_times = cursor.fetchall()
+    update_times = []
+    for query, date in raw_update_times:
+        if date:
+            update_times.append((query, date.strftime("%b %d, %Y %I:%M%p")))
+        else:
+            update_times.append((query, "Unknown"))
     cursor.close()
     username = flask.session.get("username", None)
     return flask.render_template(
-        "statistics.html", added=added, todo=todo, rejected=rejected, username=username, most_recent=most_recent
+        "statistics.html",
+        added=added,
+        todo=todo,
+        rejected=rejected,
+        username=username,
+        update_times=update_times,
     )
 
 
