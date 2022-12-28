@@ -69,6 +69,9 @@ class MachtSinnDB:
             self.mydb.database = db_name
         self.create_tables()
 
+    def update_timestamp(self):
+        self.cursor.execute("REPLACE INTO last_updated (`id`, `Date`) VALUES (1, CURRENT_DATE());")
+
     def create_tables(self):
         self.cursor.execute(
             """CREATE TABLE IF NOT EXISTS `{}` (
@@ -117,6 +120,11 @@ class MachtSinnDB:
                 db_table_lang_codes
             )
         )
+
+        self.cursor.execute(
+            """CREATE TABLE IF NOT EXISTS last_updated (`id` INT, `Date` Date, PRIMARY KEY (`id`));"""
+        )
+
 
     def save_executemany(self, sql_query, values):
         try:
@@ -271,4 +279,5 @@ db.commit()
 # Delete old entries #
 print("Pruning old matches")
 db.prune_old()
+db.update_timestamp()
 db.commit()

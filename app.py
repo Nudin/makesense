@@ -278,10 +278,9 @@ def statistics():
     todo = cursor.fetchall()
 
     cursor.execute(
-        """SELECT UPDATE_TIME
-        FROM   information_schema.tables
-        WHERE  TABLE_SCHEMA = %s
-        AND TABLE_NAME = 'languages'""",(db_name,)
+        """SELECT date
+        FROM   last_updated
+        WHERE id=1""",
     )
     raw_most_recent = cursor.fetchone()[0]
     most_recent = raw_most_recent.strftime("%b %d, %Y %I:%M%p")
