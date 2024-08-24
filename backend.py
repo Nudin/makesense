@@ -229,6 +229,7 @@ queries = [
     "queries/sv.sparql",
     "queries/he.sparql",
     "queries/da.sparql",
+    "queries/it.sparql",
     "queries/withoutdescriptions.sparql",
 ]
 for filename in queries:
