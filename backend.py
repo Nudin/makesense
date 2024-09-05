@@ -43,7 +43,7 @@ def runquery(url, params={}, session=requests):
 
 # Run a Spaql-Query
 def runSPARQLquery(query):
-    endpoint_url = "https://query.wikidata.org/sparql"
+    endpoint_url = "https://query-main.wikidata.org/sparql"
     return runquery(endpoint_url, params={"format": "json", "query": query})["bindings"]
 
 
