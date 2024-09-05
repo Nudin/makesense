@@ -233,6 +233,7 @@ queries = [
     "queries/en.sparql",
     "queries/fr.sparql",
     "queries/he.sparql",
+    "queries/it.sparql",
     "queries/nb.sparql",
     "queries/sv.sparql",
     "queries/withoutdescriptions.sparql",

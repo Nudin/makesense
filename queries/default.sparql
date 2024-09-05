@@ -12,7 +12,8 @@ SELECT * WHERE {
          ?lang != wd:Q25167 &&  #nb
          ?lang != wd:Q150 &&    #fr
          ?lang != wd:Q9035 &&   #da
-         ?lang != wd:Q9288      #he
+         ?lang != wd:Q9288 &&   #he
+         ?lang != wd:Q652       #it
         ).
   ?lexeme wikibase:lemma ?lemma.
   # Search for potentially matching items with descriptions
