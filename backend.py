@@ -19,6 +19,7 @@
 import os
 import sys
 from typing import Dict, List, Optional, Tuple
+from datetime import datetime
 
 import mysql.connector
 import requests
@@ -42,7 +43,7 @@ def runquery(url, params={}, session=requests):
 
 # Run a Spaql-Query
 def runSPARQLquery(query):
-    endpoint_url = "https://query.wikidata.org/sparql"
+    endpoint_url = "https://query-main.wikidata.org/sparql"
     return runquery(endpoint_url, params={"format": "json", "query": query})["bindings"]
 
 
@@ -62,6 +63,8 @@ class MachtSinnDB:
             use_unicode=True,
         )
         self.cursor = self.mydb.cursor()
+        self.cursor.execute("SET NAMES 'utf8mb4';")
+        self.cursor.execute("SET CHARACTER SET utf8mb4;")
         try:
             self.mydb.database = db_name
         except Exception:
@@ -104,8 +107,8 @@ class MachtSinnDB:
             """CREATE TABLE IF NOT EXISTS `{}` (
              `lang` INT,
              `QID` INT,
-             `lemma` TEXT CHARACTER SET utf8 NOT NULL,
-             `gloss` TEXT CHARACTER SET utf8 NOT NULL,
+             `lemma` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+             `gloss` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
              `version` INT,
              PRIMARY KEY (`lang`,`QID`)
         );""".format(
@@ -219,23 +222,27 @@ os.chdir(os.path.dirname(sys.argv[0]))
 
 db = MachtSinnDB()
 # Run Query #
+print("\nStarted run at", datetime.now())
 print("Running queries…")
 
 queries = [
+    "queries/da.sparql",
+    "queries/de-not-nouns.sparql",
+    "queries/de-nouns.sparql",
     "queries/default.sparql",
     "queries/en.sparql",
     "queries/fr.sparql",
-    "queries/de.sparql",
-    "queries/sv.sparql",
     "queries/he.sparql",
-    "queries/da.sparql",
     "queries/it.sparql",
+    "queries/nb.sparql",
+    "queries/sv.sparql",
     "queries/withoutdescriptions.sparql",
 ]
 for filename in queries:
     with open(filename) as f:
         sparql_query = f.read()
 
+    print("Running query", filename)
     if "# REPLACE_ME" in sparql_query:
         lang_filter = "FILTER("
         first = True
@@ -246,16 +253,15 @@ for filename in queries:
             first = False
         lang_filter += ")."
         sparql_query = sparql_query.replace("# REPLACE_ME", lang_filter)
-        print("Language Filter:", lang_filter)
+        print(" Language Filter:", lang_filter)
 
-    print("Running query", filename)
     try:
         res = runSPARQLquery(sparql_query)
-        print("Collect results…")
+        print(" Collect results…")
         num_matches = len(res)
         matches = [Match(row) for row in res]
         print(
-            "Adding {} matches ({} rows) to Database…".format(
+            " Adding {} matches ({} rows) to Database…".format(
                 num_matches, 3 * num_matches
             )
         )
@@ -265,9 +271,9 @@ for filename in queries:
         db.commit()
         db.update_timestamp(filename.split("/")[1])
     except ValueError as e:
-        print("Query failed, skipping", e)
-    except TimeoutError as e:
-        print("Query timed out", e)
+        print(" Query failed, skipping", e)
+    except TimeoutError:
+        print(" Query timed out")
 
 # Query for the wikimedia language codes #
 with open("queries/langcodes.sparql") as f:
