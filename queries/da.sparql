@@ -113,7 +113,7 @@ WHERE {
   FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q23010327  }. # fictional objects
   FILTER NOT EXISTS { ?item wdt:P136 [].}                      # genre (music, etc)
   FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q4167410  }.  # disambiguation pages
-  FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q17537576  }. # creative work         (very expensive)
+  #FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q17537576  }. # creative work         (very expensive)
   FILTER NOT EXISTS { ?item wdt:P31/wdt:P279* wd:Q35872  }.    # boat                  (medium expensive)
     FILTER NOT EXISTS { ?item a wikibase:Property}.     # filter properties
   # 2021-08-17

@@ -226,13 +226,15 @@ print("\nStarted run at", datetime.now())
 print("Running queries…")
 
 queries = [
+    "queries/da.sparql",
+    "queries/de-not-nouns.sparql",
+    "queries/de-nouns.sparql",
     "queries/default.sparql",
     "queries/en.sparql",
     "queries/fr.sparql",
-    "queries/de.sparql",
-    "queries/sv.sparql",
     "queries/he.sparql",
-    "queries/da.sparql",
+    "queries/nb.sparql",
+    "queries/sv.sparql",
     "queries/withoutdescriptions.sparql",
 ]
 for filename in queries:
