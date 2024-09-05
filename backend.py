@@ -63,6 +63,8 @@ class MachtSinnDB:
             use_unicode=True,
         )
         self.cursor = self.mydb.cursor()
+        self.cursor.execute("SET NAMES 'utf8mb4';")
+        self.cursor.execute("SET CHARACTER SET utf8mb4;")
         try:
             self.mydb.database = db_name
         except Exception:
@@ -105,8 +107,8 @@ class MachtSinnDB:
             """CREATE TABLE IF NOT EXISTS `{}` (
              `lang` INT,
              `QID` INT,
-             `lemma` TEXT CHARACTER SET utf8 NOT NULL,
-             `gloss` TEXT CHARACTER SET utf8 NOT NULL,
+             `lemma` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+             `gloss` TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
              `version` INT,
              PRIMARY KEY (`lang`,`QID`)
         );""".format(
