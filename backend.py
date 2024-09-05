@@ -19,6 +19,7 @@
 import os
 import sys
 from typing import Dict, List, Optional, Tuple
+from datetime import datetime
 
 import mysql.connector
 import requests
@@ -219,6 +220,7 @@ os.chdir(os.path.dirname(sys.argv[0]))
 
 db = MachtSinnDB()
 # Run Query #
+print("\nStarted run at", datetime.now())
 print("Running queries…")
 
 queries = [
@@ -235,6 +237,7 @@ for filename in queries:
     with open(filename) as f:
         sparql_query = f.read()
 
+    print("Running query", filename)
     if "# REPLACE_ME" in sparql_query:
         lang_filter = "FILTER("
         first = True
@@ -245,16 +248,15 @@ for filename in queries:
             first = False
         lang_filter += ")."
         sparql_query = sparql_query.replace("# REPLACE_ME", lang_filter)
-        print("Language Filter:", lang_filter)
+        print(" Language Filter:", lang_filter)
 
-    print("Running query", filename)
     try:
         res = runSPARQLquery(sparql_query)
-        print("Collect results…")
+        print(" Collect results…")
         num_matches = len(res)
         matches = [Match(row) for row in res]
         print(
-            "Adding {} matches ({} rows) to Database…".format(
+            " Adding {} matches ({} rows) to Database…".format(
                 num_matches, 3 * num_matches
             )
         )
@@ -264,9 +266,9 @@ for filename in queries:
         db.commit()
         db.update_timestamp(filename.split("/")[1])
     except ValueError as e:
-        print("Query failed, skipping", e)
-    except TimeoutError as e:
-        print("Query timed out", e)
+        print(" Query failed, skipping", e)
+    except TimeoutError:
+        print(" Query timed out")
 
 # Query for the wikimedia language codes #
 with open("queries/langcodes.sparql") as f:
