@@ -17,9 +17,10 @@
 # You should have received a copy of the GNU General Public License along
 # with this program.  If not, see <http://www.gnu.org/licenses/>.
 import os
+import re
 import sys
-from typing import Dict, List, Optional, Tuple
 from datetime import datetime
+from typing import Dict, List, Optional, Tuple
 
 import mysql.connector
 import requests
@@ -42,16 +43,30 @@ def runquery(url, params={}, session=requests):
 
 
 # Run a Spaql-Query
-def runSPARQLquery(query):
-    endpoint_url = "https://query-main.wikidata.org/sparql"
-    return runquery(endpoint_url, params={"format": "json", "query": query})["bindings"]
+def runSPARQLquery(query, endpoint=None):
+    if endpoint is None:
+        match = re.search(r"# Endpoint: (\w+)", query)
+        if match:
+            endpoint = match.group(1)
+        else:
+            endpoint = "WDQS"
+    if endpoint == "WDQS":
+        endpoint_url = "https://query.wikidata.org/sparql"
+        return runquery(endpoint_url, params={"format": "json", "query": query})[
+            "bindings"
+        ]
+    elif endpoint == "Qlever":
+        endpoint_url = "https://qlever.dev/api/wikidata"
+        return runquery(endpoint_url, params={"query": query})["bindings"]
+    else:
+        raise ValueError("Unknown endpoint {}".format(endpoint))
 
 
 class MachtSinnDB:
 
     # This variable should be incremented every time the query is changed
     # and the database should be pruned from data that is not in the query anymore
-    dataversion = 10
+    dataversion = 11
 
     def __init__(self):
         # Open SQL-Connection
