@@ -259,13 +259,12 @@ for filename in queries:
     print("Running query", filename)
     if "# REPLACE_ME" in sparql_query:
         lang_filter = "FILTER("
-        first = True
-        for lang in db.get_common_languages():
-            if not first:
-                lang_filter += " && "
-            lang_filter += "?lang != wd:Q{}".format(lang[0])
-            first = False
-        lang_filter += ")."
+        common_langs = db.get_common_languages()
+        lang_filter = (
+            "FILTER( ?lang NOT IN ("
+            + ", ".join(f"wd:Q{lang[0]}" for lang in common_langs)
+            + ") )."
+        )
         sparql_query = sparql_query.replace("# REPLACE_ME", lang_filter)
         print(" Language Filter:", lang_filter)
 
