@@ -242,8 +242,7 @@ print("Running queries…")
 
 queries = [
     "queries/da.sparql",
-    "queries/de-not-nouns.sparql",
-    "queries/de-nouns.sparql",
+    "queries/de.sparql",
     "queries/default.sparql",
     "queries/en.sparql",
     "queries/fr.sparql",
