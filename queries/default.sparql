@@ -59,30 +59,43 @@ SELECT ?lexeme ?item ?lemma ?desc ?cat ?genus ?lang WHERE {
      wd:Q40056     # software
      wd:Q43229     # organization of any kind
      wd:Q101352    # family name
+     wd:Q134556    # single (music)
      wd:Q147276    # names of any kind
      wd:Q170173    # yacht
      wd:Q191067    # article
+     wd:Q202866    # animation movie
      wd:Q208569    # album
      wd:Q215380    # bands
+     wd:Q226730    # silent movie
      wd:Q355304    # watercourse
      wd:Q482994    # album
      wd:Q494452    # heraldry
+     wd:Q786820    # automobile manuf.
      wd:Q819989    # lunar crater
      wd:Q1145276   # fictional country (star trek)
      wd:Q1229071   # motif
+     wd:Q1348589   # lunar crater
      wd:Q1391494   # technical terminology
+     wd:Q1475691   # mars crater
      wd:Q1505023   # interpellation
      wd:Q1725664   # terminology of any kind
      wd:Q1897960   # trotting horse
      wd:Q2235308   # types of ships
      wd:Q3305213   # painting
      wd:Q3331189   # version, edition, or translation
+     wd:Q3404720   # tincture
      wd:Q3491429   # military terms
+     wd:Q3658341   # literary character
      wd:Q3744866   # common charge (heraldic)
+     wd:Q3744880   # nature figure (heraldry)
      wd:Q4167410   # disambiguation page
      wd:Q4167836   # wikimedia cat
      wd:Q5185279   # poem
+     wd:Q5398426   # tv series
+     wd:Q6881511   # enterprise
+     wd:Q7725634   # literary work
      wd:Q10429085  # report
+     wd:Q11060274  # print
      wd:Q11668273  # shogi pieces
      wd:Q13406463  # wikimedia list article
      wd:Q13417114  # noble family
@@ -93,14 +106,19 @@ SELECT ?lexeme ?item ?lemma ?desc ?cat ?genus ?lang WHERE {
      wd:Q17155032  # type of software
      wd:Q17537576  # any creative work incl. music, video, text, etc.
      wd:Q17638537  # routine - fix computer terminology
+     wd:Q18218093  # other type of art
      wd:Q19798642  # WD value
      wd:Q19798644  # wikibase model terms
      wd:Q19798645  # wikibase datatype
      wd:Q20202269  # music terms
      wd:Q21191270  # tv series episode
+     wd:Q22808320  # disambig name type
+     wd:Q29168811  # animated film
+     wd:Q29654788  # unicode character
      wd:Q56876983  # symbol (heraldic)
      wd:Q57814795  # domesticated animal
      wd:Q58408484  # Wikimedia list of persons by surname
+     wd:Q66050470  # conjugation table
      wd:Q99045339  # written question
      wd:Q99281788  # star trek location
      wd:Q105543609 # musical work
@@ -112,9 +130,12 @@ SELECT ?lexeme ?item ?lemma ?desc ?cat ?genus ?lang WHERE {
   FILTER NOT EXISTS {
     VALUES ?not {
       wd:Q3918         # university
+      wd:Q14745        # furniture
       wd:Q15284        # municipality
       wd:Q55043        # gymnasium
+      wd:Q192249       # saddle
       wd:Q494452       # blazonry
+      wd:Q783794       # company
       wd:Q13220204     # second-level administrative country subdivision
       wd:Q15911314     # association
     }.
@@ -139,9 +160,28 @@ SELECT ?lexeme ?item ?lemma ?desc ?cat ?genus ?lang WHERE {
       wdt:P195     # collection (of art)
       wdt:P688     # gene stuff
       wdt:P1482    # stack exchange
+      wdt:P8514    # brazilian import that has a lot of false positives
       }
     ?item ?not2 ?_
   }.
 
   FILTER NOT EXISTS { ?item wdt:P361 wd:Q18336 }.              # part of heraldry
+
+  # filter on aspect of:
+  FILTER NOT EXISTS {
+    VALUES ?not3 {
+      wd:Q18336  # heraldry
+      wd:Q494452 # blazonry
+      }
+      ?item wdt:P1269 ?not3
+  }.
+
+  # filter on part of:
+  FILTER NOT EXISTS {
+    VALUES ?not4 {
+      wd:Q18336  # heraldry
+      wd:Q494452 # blazonry
+      }
+      ?item wdt:P361 ?not4
+  }.
 }
