@@ -29,6 +29,7 @@ SELECT ?lexeme ?item ?lemma ?desc ?cat ?genus (wd:Q1860 as ?lang) WHERE {
   }.
   # Remove homographs since these are to error prone
   FILTER NOT EXISTS { ?lexeme wdt:P5402 ?homograph }.
+  FILTER NOT EXISTS { ?lexeme wdt:P11577 ?_ }.
 
   # Filter properties
   FILTER NOT EXISTS { ?item a wikibase:Property}.
