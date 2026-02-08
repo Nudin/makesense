@@ -32,12 +32,18 @@ user_agent = "makesense 0.1.0 by User:MichaelSchoenitzer"
 
 
 # Run a query against a web-api
-def runquery(url, params={}, session=requests):
+def runquery(url, params=None, data=None, session=requests):
+    if params is None:
+        params = {}
     headers = {"User-Agent": user_agent}
-    r = session.get(url, headers=headers, params=params)
+    if data is not None:
+        headers["Content-Type"] = "application/sparql-query"
+        r = session.post(url, headers=headers, params=params, data=data)
+    else:
+        r = session.get(url, headers=headers, params=params)
     if r.status_code == 200:
         return r.json()["results"]
-    if r.status_code == 429 or r.status_code == 500:
+    if r.status_code in [429, 500]:
         raise TimeoutError(r.text)
     raise ValueError(r.text)
 
@@ -57,7 +63,7 @@ def runSPARQLquery(query, endpoint=None):
         ]
     elif endpoint == "Qlever":
         endpoint_url = "https://qlever.dev/api/wikidata"
-        return runquery(endpoint_url, params={"query": query})["bindings"]
+        return runquery(endpoint_url, params={}, data=query)["bindings"]
     else:
         raise ValueError("Unknown endpoint {}".format(endpoint))
 
